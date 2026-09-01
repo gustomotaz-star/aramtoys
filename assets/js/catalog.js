@@ -7,6 +7,10 @@ function localized(item, field) {
   return item[field];
 }
 
+function esc(value) {
+  return window.aramEscapeHtml ? window.aramEscapeHtml(value) : String(value ?? '');
+}
+
 async function loadCategories() {
   const grid = document.querySelector('.cat-grid');
   if (!grid) return;
@@ -26,26 +30,27 @@ function renderCategories() {
   if (!grid) return;
 
   grid.innerHTML = cachedCategories.map(cat => `
-    <a class="cat-card" href="category.html?slug=${cat.slug}">
-      <div class="cat-icon">${cat.icon || '🧸'}</div>
-      <h3>${localized(cat, 'name')}</h3>
+    <a class="cat-card" href="category.html?slug=${encodeURIComponent(cat.slug || '')}">
+      <div class="cat-icon">${esc(cat.icon || '🧸')}</div>
+      <h3>${esc(localized(cat, 'name'))}</h3>
     </a>
   `).join('');
 }
 
 function productCardHtml(p) {
+  const name = localized(p, 'name');
   return `
     <div class="prod-card">
       <div class="prod-thumb">
-        ${p.badge ? `<span class="prod-badge">${p.badge}</span>` : ''}
-        ${p.image_url ? `<img src="${p.image_url}" alt="${localized(p, 'name')}">` : '🧸'}
+        ${p.badge ? `<span class="prod-badge">${esc(p.badge)}</span>` : ''}
+        ${p.image_url ? `<img src="${esc(p.image_url)}" alt="${esc(name)}">` : '🧸'}
       </div>
       <div class="prod-body">
-        <span class="prod-cat">${p.categories ? localized(p.categories, 'name') : ''}</span>
-        <span class="prod-name">${localized(p, 'name')}</span>
+        <span class="prod-cat">${p.categories ? esc(localized(p.categories, 'name')) : ''}</span>
+        <span class="prod-name">${esc(name)}</span>
         <div class="prod-row">
           <span class="prod-price">${Number(p.price).toFixed(0)} EGP</span>
-          <button class="add-btn" aria-label="Add to cart" data-id="${p.id}" data-name="${p.name}" data-price="${p.price}">+</button>
+          <button class="add-btn" aria-label="Add to cart" data-id="${esc(p.id)}" data-name="${esc(p.name)}" data-price="${Number(p.price)}">+</button>
         </div>
       </div>
     </div>
