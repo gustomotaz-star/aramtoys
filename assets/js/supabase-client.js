@@ -73,4 +73,16 @@ const SUPABASE_KEY = 'sb_publishable_jOnyXV1B8YkNTcg1X9GBnQ_0TdXoACG';
   };
 })();
 
+// The management page uses the same visual class for tabs and the Add Product button.
+// Handle that button in the capture phase so the generic tab handler cannot treat it as a panel tab.
+document.addEventListener('click', (event) => {
+  const button = event.target.closest && event.target.closest('#toggle-add-product');
+  if (!button) return;
+  const form = document.getElementById('add-product-form');
+  if (!form) return;
+  event.preventDefault();
+  event.stopImmediatePropagation();
+  form.style.display = form.style.display === 'none' ? 'block' : 'none';
+}, true);
+
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
