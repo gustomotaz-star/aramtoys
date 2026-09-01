@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aram Toys — Play Starts Here</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito+Sans:wght@400;600;700;800&family=Space+Mono:wght@400;700&family=Baloo+Bhaijaan+2:wght@500;600;700;800&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/rtl.css">
+<style>
+  :root{
+    --cream:#FBF6EC;
+    --ink:#2B2A4C;
+    --coral:#FF6B5B;
+    --mustard:#FFC145;
+    --mint:#4ECDC4;
+    --paper:#FFFFFF;
+    --line: rgba(43,42,76,0.12);
+    --radius-block: 10px;
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+
+  html{scroll-behavior:smooth;}
+
+  body{
+    background:var(--cream);
+    color:var(--ink);
+    font-family:'Nunito Sans', sans-serif;
+    line-height:1.5;
+    overflow-x:hidden;
+  }
+
+  h1,h2,h3, .display{
+    font-family:'Baloo 2', sans-serif;
+    font-weight:700;
+    line-height:1.05;
+  }
+
+  .mono{
+    font-family:'Space Mono', monospace;
+  }
+
+  a{color:inherit; text-decoration:none;}
+  img{max-width:100%; display:block;}
+  button{font-family:inherit; cursor:pointer; border:none;}
+
+  .wrap{
+    max-width:1180px;
+    margin:0 auto;
+    padding:0 32px;
+  }
+
+  /* ---------- Block Logo (signature element) ---------- */
+  .block-logo{
+    display:inline-flex;
+    gap:4px;
+  }
+  .block-logo .tile{
+    width:34px; height:34px;
+    border-radius:8px;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Baloo 2', sans-serif;
+    font-weight:800;
+    font-size:18px;
+    color:var(--paper);
+    box-shadow: 0 3px 0 rgba(43,42,76,0.25);
+    transition: transform .25s cubic-bezier(.34,1.56,.64,1);
+  }
+  .block-logo .tile:nth-child(1){background:var(--coral);}
+  .block-logo .tile:nth-child(2){background:var(--mustard); color:var(--ink); box-shadow:0 3px 0 rgba(43,42,76,0.2);}
+  .block-logo .tile:nth-child(3){background:var(--mint);}
+  .block-logo .tile:nth-child(4){background:var(--ink);}
+  .block-logo:hover .tile{transform:translateY(0);}
+  .block-logo .tile:hover{transform: translateY(-6px) rotate(-6deg);}
+
+  .hero-blocks{
+    display:flex; gap:14px; flex-wrap:wrap;
+  }
+  .hero-blocks .tile{
+    width:74px; height:74px;
+    border-radius:16px;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Baloo 2', sans-serif;
+    font-weight:800;
+    font-size:38px;
+    color:var(--paper);
+    box-shadow: 0 6px 0 rgba(43,42,76,0.22);
+    transition: transform .35s cubic-bezier(.34,1.56,.64,1), box-shadow .35s;
+    cursor:default;
+    user-select:none;
+  }
+  .hero-blocks .tile:nth-child(1){background:var(--coral); animation: settle .7s cubic-bezier(.34,1.56,.64,1) .05s both;}
+  .hero-blocks .tile:nth-child(2){background:var(--mustard); color:var(--ink); box-shadow:0 6px 0 rgba(43,42,76,0.18); animation: settle .7s cubic-bezier(.34,1.56,.64,1) .18s both;}
+  .hero-blocks .tile:nth-child(3){background:var(--mint); animation: settle .7s cubic-bezier(.34,1.56,.64,1) .31s both;}
+  .hero-blocks .tile:nth-child(4){background:var(--ink); animation: settle .7s cubic-bezier(.34,1.56,.64,1) .44s both;}
+
+  .hero-blocks .tile:hover{
+    transform: translateY(-10px) rotate(-8deg);
+    box-shadow: 0 16px 20px -8px rgba(43,42,76,0.35);
+  }
+
+  @keyframes settle{
+    0%{ transform: translateY(-120px) rotate(-25deg); opacity:0; }
+    70%{ opacity:1; }
+    100%{ transform: translateY(0) rotate(0deg); opacity:1; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .hero-blocks .tile{ animation:none !important; }
+  }
+
+  /* ---------- Header ---------- */
+  header{
+    position:sticky; top:0; z-index:50;
+    background:rgba(251,246,236,0.9);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 0;
+  }
+  .nav-links{
+    display:flex; gap:36px;
+    font-weight:700;
+    font-size:15px;
+  }
+  .nav-links a{
+    position:relative;
+    padding-bottom:4px;
+  }
+  .nav-links a::after{
+    content:"";
+    position:absolute; left:0; bottom:0;
+    width:0; height:3px;
+    background:var(--coral);
+    border-radius:2px;
+    transition:width .2s ease;
+  }
+  .nav-links a:hover::after{ width:100%; }
+
+  .nav-actions{ display:flex; align-items:center; gap:18px; }
+  .icon-btn{
+    width:40px; height:40px;
+    border-radius:12px;
+    background:var(--paper);
+    border:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center;
+    font-size:18px;
+    transition:transform .15s;
+  }
+  .icon-btn:hover{ transform:translateY(-2px); }
+  .user-greeting{
+    font-weight:800; font-size:14px; color:var(--ink);
+    padding:9px 14px; border-radius:100px; background:var(--paper); border:1px solid var(--line);
+  }
+  .user-greeting:hover{ border-color:var(--coral); }
+  .cart-icon{ position:relative; }
+  .cart-badge{
+    display:none;
+    position:absolute; top:-4px; right:-4px;
+    background:var(--coral); color:#fff;
+    font-size:10px; font-weight:800;
+    min-width:16px; height:16px; border-radius:8px;
+    align-items:center; justify-content:center; padding:0 4px;
+  }
+
+  @media (max-width:820px){
+    .nav-links{ display:none; }
+  }
+
+  /* ---------- Buttons ---------- */
+  .btn{
+    display:inline-flex; align-items:center; gap:10px;
+    padding:14px 28px;
+    border-radius:14px;
+    font-weight:800;
+    font-size:16px;
+    transition: transform .18s cubic-bezier(.34,1.56,.64,1), box-shadow .18s;
+  }
+  .btn-primary{
+    background:var(--ink);
+    color:var(--cream);
+    box-shadow: 0 5px 0 rgba(43,42,76,0.35);
+  }
+  .btn-primary:hover{ transform:translateY(-3px); box-shadow: 0 8px 0 rgba(43,42,76,0.35); }
+  .btn-primary:active{ transform:translateY(0); box-shadow:0 2px 0 rgba(43,42,76,0.35); }
+
+  .btn-ghost{
+    background:transparent;
+    color:var(--ink);
+    border:2px solid var(--ink);
+  }
+  .btn-ghost:hover{ background:var(--ink); color:var(--cream); }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    padding:80px 0 60px;
+    display:grid;
+    grid-template-columns:1.05fr 0.95fr;
+    gap:40px;
+    align-items:center;
+  }
+  .eyebrow{
+    display:inline-block;
+    font-family:'Space Mono', monospace;
+    font-size:13px;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    background:var(--mustard);
+    padding:6px 14px;
+    border-radius:100px;
+    margin-bottom:22px;
+    font-weight:700;
+  }
+  .hero h1{
+    font-size:clamp(38px, 5.4vw, 62px);
+    margin-bottom:22px;
+  }
+  .hero h1 .accent{ color:var(--coral); }
+  .hero p.lead{
+    font-size:18px;
+    max-width:460px;
+    color:rgba(43,42,76,0.75);
+    margin-bottom:32px;
+  }
+  .hero-cta{ display:flex; gap:16px; flex-wrap:wrap; margin-bottom:36px; }
+
+  .trust-row{
+    display:flex; gap:28px; flex-wrap:wrap;
+    font-size:14px; font-weight:700;
+    color:rgba(43,42,76,0.6);
+  }
+  .trust-row span{ display:flex; align-items:center; gap:8px; }
+
+  .hero-visual{
+    position:relative;
+    display:flex; align-items:center; justify-content:center;
+    min-height:380px;
+  }
+  .shelf{
+    position:absolute;
+    bottom:40px; left:0; right:0;
+    height:18px;
+    background:var(--ink);
+    border-radius:6px;
+    box-shadow:0 10px 0 rgba(43,42,76,0.15);
+  }
+  .hero-visual .hero-blocks{
+    position:relative;
+    z-index:2;
+    margin-bottom:60px;
+  }
+  .blob{
+    position:absolute;
+    border-radius:50%;
+    filter:blur(0px);
+    opacity:0.5;
+  }
+  .blob-1{ width:220px; height:220px; background:var(--mint); top:-20px; right:10px; opacity:0.35;}
+  .blob-2{ width:160px; height:160px; background:var(--coral); bottom:60px; left:-10px; opacity:0.25;}
+
+  @media (max-width:900px){
+    .hero{ grid-template-columns:1fr; padding-top:48px; }
+    .hero-visual{ order:-1; min-height:260px; }
+  }
+
+  /* ---------- Section headers ---------- */
+  .section{ padding:70px 0; }
+  .section-head{
+    display:flex; justify-content:space-between; align-items:flex-end;
+    margin-bottom:40px; gap:24px; flex-wrap:wrap;
+  }
+  .section-head h2{ font-size:clamp(28px,3.4vw,38px); }
+  .section-tag{
+    font-family:'Space Mono', monospace;
+    font-size:13px; text-transform:uppercase; letter-spacing:0.06em;
+    color:var(--coral); font-weight:700; margin-bottom:10px; display:block;
+  }
+  .section-sub{ color:rgba(43,42,76,0.65); max-width:420px; font-size:15px; }
+
+  /* ---------- Categories ---------- */
+  .cat-grid{
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+    gap:16px;
+  }
+  .cat-card{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:20px;
+    padding:24px 16px;
+    text-align:center;
+    transition:transform .2s cubic-bezier(.34,1.56,.64,1), box-shadow .2s;
+  }
+  .cat-card:hover{
+    transform:translateY(-6px) rotate(-1deg);
+    box-shadow:0 14px 24px -12px rgba(43,42,76,0.25);
+  }
+  .cat-icon{
+    width:56px; height:56px;
+    border-radius:16px;
+    margin:0 auto 14px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:26px;
+  }
+  .cat-card:nth-child(6n+1) .cat-icon{ background:#FFE3DE; }
+  .cat-card:nth-child(6n+2) .cat-icon{ background:#FFF1CE; }
+  .cat-card:nth-child(6n+3) .cat-icon{ background:#DAF6F3; }
+  .cat-card:nth-child(6n+4) .cat-icon{ background:#E7E6FA; }
+  .cat-card:nth-child(6n+5) .cat-icon{ background:#FFE3DE; }
+  .cat-card:nth-child(6n+6) .cat-icon{ background:#FFF1CE; }
+  .cat-card h3{ font-size:14px; font-family:'Nunito Sans',sans-serif; font-weight:800; }
+
+  @media (max-width:980px){ .cat-grid{ grid-template-columns:repeat(3,1fr);} }
+  @media (max-width:560px){ .cat-grid{ grid-template-columns:repeat(2,1fr);} }
+
+  /* ---------- Products ---------- */
+  .prod-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:22px;
+  }
+  .prod-card{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:22px;
+    overflow:hidden;
+    transition:transform .2s cubic-bezier(.34,1.56,.64,1), box-shadow .2s;
+    display:flex; flex-direction:column;
+  }
+  .prod-card:hover{ transform:translateY(-6px); box-shadow:0 18px 30px -16px rgba(43,42,76,0.3); }
+  .prod-thumb{
+    height:170px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:56px;
+    position:relative;
+    overflow:hidden;
+  }
+  .prod-thumb img{ width:100%; height:100%; object-fit:cover; }
+  .prod-card:nth-child(4n+1) .prod-thumb{ background:linear-gradient(135deg,#FFE3DE,#FFF1CE); }
+  .prod-card:nth-child(4n+2) .prod-thumb{ background:linear-gradient(135deg,#DAF6F3,#E7E6FA); }
+  .prod-card:nth-child(4n+3) .prod-thumb{ background:linear-gradient(135deg,#FFF1CE,#DAF6F3); }
+  .prod-card:nth-child(4n+4) .prod-thumb{ background:linear-gradient(135deg,#E7E6FA,#FFE3DE); }
+  .prod-badge{
+    position:absolute; top:12px; left:12px;
+    background:var(--ink); color:var(--cream);
+    font-family:'Space Mono',monospace;
+    font-size:11px; font-weight:700;
+    padding:4px 10px; border-radius:100px;
+  }
+  .prod-body{ padding:18px 18px 20px; display:flex; flex-direction:column; gap:10px; flex:1;}
+  .prod-cat{ font-size:12px; text-transform:uppercase; letter-spacing:0.05em; color:rgba(43,42,76,0.5); font-weight:700; }
+  .prod-name{ font-family:'Baloo 2',sans-serif; font-weight:700; font-size:18px; }
+  .prod-row{ display:flex; align-items:center; justify-content:space-between; margin-top:auto; }
+  .prod-price{ font-family:'Space Mono',monospace; font-weight:700; font-size:17px; }
+  .add-btn{
+    width:38px; height:38px;
+    border-radius:12px;
+    background:var(--ink);
+    color:var(--cream);
+    font-size:20px;
+    display:flex; align-items:center; justify-content:center;
+    transition:transform .15s cubic-bezier(.34,1.56,.64,1), background .15s;
+  }
+  .add-btn:hover{ background:var(--coral); transform:scale(1.08) rotate(90deg); }
+
+  @media (max-width:980px){ .prod-grid{ grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:560px){ .prod-grid{ grid-template-columns:1fr;} }
+
+  /* ---------- Why us ---------- */
+  .why{
+    background:var(--ink);
+    color:var(--cream);
+    border-radius:32px;
+    padding:60px 40px;
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:32px;
+  }
+  .why-item .num{
+    font-family:'Space Mono',monospace;
+    font-size:13px;
+    color:var(--mustard);
+    margin-bottom:14px;
+    font-weight:700;
+  }
+  .why-item h3{ font-size:19px; margin-bottom:10px; }
+  .why-item p{ font-size:14px; color:rgba(251,246,236,0.7); }
+
+  @media (max-width:900px){ .why{ grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:560px){ .why{ grid-template-columns:1fr; padding:40px 24px;} }
+
+  /* ---------- Newsletter ---------- */
+  .newsletter{
+    text-align:center;
+    padding:90px 0;
+  }
+  .newsletter h2{ font-size:clamp(28px,4vw,42px); margin-bottom:14px; }
+  .newsletter p{ color:rgba(43,42,76,0.65); margin-bottom:32px; }
+  .news-form{
+    display:flex; gap:10px; justify-content:center; flex-wrap:wrap;
+  }
+  .news-form input{
+    padding:14px 20px;
+    border-radius:14px;
+    border:2px solid var(--ink);
+    font-family:inherit;
+    font-size:15px;
+    width:300px;
+    max-width:80vw;
+    background:var(--paper);
+  }
+  .news-form input:focus{ outline:3px solid var(--mint); outline-offset:2px; }
+
+  /* ---------- Footer ---------- */
+  footer{
+    border-top:1px solid var(--line);
+    padding:50px 0 30px;
+  }
+  .foot-grid{
+    display:grid;
+    grid-template-columns:1.4fr repeat(3,1fr);
+    gap:32px;
+    margin-bottom:40px;
+  }
+  .foot-col h4{ font-size:13px; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:16px; font-weight:800; }
+  .foot-col a{ display:block; font-size:14px; color:rgba(43,42,76,0.7); margin-bottom:10px; }
+  .foot-col a:hover{ color:var(--coral); }
+  .foot-about p{ font-size:14px; color:rgba(43,42,76,0.65); max-width:280px; margin-top:16px; }
+  .foot-bottom{
+    display:flex; justify-content:space-between; align-items:center;
+    padding-top:24px; border-top:1px solid var(--line);
+    font-size:13px; color:rgba(43,42,76,0.55);
+    flex-wrap:wrap; gap:10px;
+  }
+
+  @media (max-width:820px){ .foot-grid{ grid-template-columns:1fr 1fr; } }
+
+  :focus-visible{ outline:3px solid var(--coral); outline-offset:2px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <div class="block-logo" aria-label="Aram Toys logo">
+      <span class="tile">A</span><span class="tile">R</span><span class="tile">A</span><span class="tile">M</span>
+    </div>
+    <nav class="nav-links">
+      <a href="#shop" data-i18n="nav_shop">Shop</a>
+      <a href="#categories" data-i18n="nav_categories">Categories</a>
+      <a href="#why" data-i18n="nav_why">Why Aram</a>
+      <a href="#newsletter" data-i18n="nav_newsletter">Newsletter</a>
+    </nav>
+    <div class="nav-actions">
+      <a href="account.html" id="user-greeting" class="user-greeting" style="display:none;"></a>
+      <button class="lang-toggle" aria-label="Change language">English</button>
+      <button class="icon-btn" aria-label="Search">🔍</button>
+      <a href="login.html" id="account-link" class="icon-btn" aria-label="Account">👤</a>
+      <a href="cart.html" class="icon-btn cart-icon" aria-label="Cart">
+        🧺
+        <span id="cart-badge" class="cart-badge">0</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="hero wrap">
+    <div>
+      <span class="eyebrow" data-i18n="eyebrow">New arrivals every friday</span>
+      <h1><span data-i18n="hero_title_1">Toys kids</span> <span class="accent" data-i18n="hero_title_accent">actually</span> <span data-i18n="hero_title_2">play with twice.</span></h1>
+      <p class="lead" data-i18n="hero_lead">Aram Toys hand-picks durable, imagination-first toys for ages 0–12 — tested by real kids, approved by tired parents.</p>
+      <div class="hero-cta">
+        <a href="#shop" class="btn btn-primary" data-i18n="hero_cta_shop">Shop the collection →</a>
+        <a href="#categories" class="btn btn-ghost" data-i18n="hero_cta_browse">Browse categories</a>
+      </div>
+      <div class="trust-row">
+        <span data-i18n="trust_shipping">🚚 Free shipping over 800 EGP</span>
+        <span data-i18n="trust_safe">♻️ Safe, non-toxic materials</span>
+        <span data-i18n="trust_rating">⭐ 4.9/5 from 3,200+ parents</span>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="blob blob-1"></div>
+      <div class="blob blob-2"></div>
+      <div class="hero-blocks">
+        <span class="tile">A</span><span class="tile">R</span><span class="tile">A</span><span class="tile">M</span>
+      </div>
+      <div class="shelf"></div>
+    </div>
+  </section>
+
+  <section class="section wrap" id="categories">
+    <div class="section-head">
+      <div>
+        <span class="section-tag" data-i18n="cat_tag">Find their favorite</span>
+        <h2 data-i18n="cat_title">Shop by category</h2>
+      </div>
+      <p class="section-sub" data-i18n="cat_sub">From nursery-safe rattles to weekend-long puzzles — sorted the way parents actually search.</p>
+    </div>
+    <div class="cat-grid">
+      <div class="cat-card"><div class="cat-icon">🧱</div><h3>مكعبات البناء</h3></div>
+      <div class="cat-card"><div class="cat-icon">🧸</div><h3>دمى وشخصيات</h3></div>
+      <div class="cat-card"><div class="cat-icon">⚽</div><h3>ألعاب خارجية</h3></div>
+      <div class="cat-card"><div class="cat-icon">🧩</div><h3>ألغاز وألعاب</h3></div>
+      <div class="cat-card"><div class="cat-icon">🎨</div><h3>فنون وأشغال يدوية</h3></div>
+      <div class="cat-card"><div class="cat-icon">🍼</div><h3>ألعاب الرضع</h3></div>
+    </div>
+  </section>
+
+  <section class="section wrap" id="shop">
+    <div class="section-head">
+      <div>
+        <span class="section-tag" data-i18n="shop_tag">Best sellers</span>
+        <h2 data-i18n="shop_title">Loved by little hands</h2>
+      </div>
+      <p class="section-sub" data-i18n="shop_sub">The most re-ordered toys in the shop, this month.</p>
+    </div>
+    <div class="prod-grid">
+      <div class="prod-card">
+        <div class="prod-thumb"><span class="prod-badge">الأكثر مبيعاً</span>🧱</div>
+        <div class="prod-body">
+          <span class="prod-cat">مكعبات البناء</span>
+          <span class="prod-name">طقم مكعبات قوس قزح (120 قطعة)</span>
+          <div class="prod-row"><span class="prod-price">450 EGP</span><button class="add-btn" aria-label="Add to cart">+</button></div>
+        </div>
+      </div>
+      <div class="prod-card">
+        <div class="prod-thumb">🚗</div>
+        <div class="prod-body">
+          <span class="prod-cat">مركبات</span>
+          <span class="prod-name">سيارة خشبية سريعة الانطلاق</span>
+          <div class="prod-row"><span class="prod-price">320 EGP</span><button class="add-btn" aria-label="Add to cart">+</button></div>
+        </div>
+      </div>
+      <div class="prod-card">
+        <div class="prod-thumb"><span class="prod-badge">جديد</span>🧩</div>
+        <div class="prod-body">
+          <span class="prod-cat">ألغاز</span>
+          <span class="prod-name">بازل خريطة مصر الأرضي</span>
+          <div class="prod-row"><span class="prod-price">280 EGP</span><button class="add-btn" aria-label="Add to cart">+</button></div>
+        </div>
+      </div>
+      <div class="prod-card">
+        <div class="prod-thumb">🧸</div>
+        <div class="prod-body">
+          <span class="prod-cat">دمى محشوة</span>
+          <span class="prod-name">دبدوب للعناق، 40 سم</span>
+          <div class="prod-row"><span class="prod-price">380 EGP</span><button class="add-btn" aria-label="Add to cart">+</button></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section wrap" id="why">
+    <div class="why">
+      <div class="why-item">
+        <div class="num">01</div>
+        <h3 data-i18n="why_1_title">Parent-tested</h3>
+        <p data-i18n="why_1_desc">Every toy goes home with a real family before it goes on the shelf.</p>
+      </div>
+      <div class="why-item">
+        <div class="num">02</div>
+        <h3 data-i18n="why_2_title">Safety-first materials</h3>
+        <p data-i18n="why_2_desc">Non-toxic paints, rounded edges, and age labels you can trust.</p>
+      </div>
+      <div class="why-item">
+        <div class="num">03</div>
+        <h3 data-i18n="why_3_title">Fast Cairo delivery</h3>
+        <p data-i18n="why_3_desc">Same-day dispatch on orders placed before 3pm.</p>
+      </div>
+      <div class="why-item">
+        <div class="num">04</div>
+        <h3 data-i18n="why_4_title">Easy 14-day returns</h3>
+        <p data-i18n="why_4_desc">Didn't land? Send it back — no questions, no hassle.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="newsletter wrap" id="newsletter">
+    <h2 data-i18n="newsletter_title">Get first pick of new arrivals</h2>
+    <p data-i18n="newsletter_sub">One email a week. New toys, restocks, and the odd parenting tip.</p>
+    <form class="news-form" onsubmit="event.preventDefault(); this.querySelector('button').textContent=t('newsletter_done');">
+      <input type="email" data-i18n-placeholder="newsletter_placeholder" placeholder="you@example.com" required aria-label="Email address">
+      <button type="submit" class="btn btn-primary" data-i18n="newsletter_btn">Subscribe</button>
+    </form>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-about">
+        <div class="block-logo">
+          <span class="tile">A</span><span class="tile">R</span><span class="tile">A</span><span class="tile">M</span>
+        </div>
+        <p data-i18n="foot_about">Aram Toys is a Cairo-based toy shop bringing safe, imagination-first play to kids across Egypt.</p>
+      </div>
+      <div class="foot-col">
+        <h4 data-i18n="foot_shop">Shop</h4>
+        <a href="#" data-i18n="cat_building_blocks">Building Blocks</a>
+        <a href="#" data-i18n="cat_dolls_figures">Dolls & Figures</a>
+        <a href="#" data-i18n="cat_outdoor_play">Outdoor Play</a>
+        <a href="#" data-i18n="cat_puzzles_games">Puzzles & Games</a>
+      </div>
+      <div class="foot-col">
+        <h4 data-i18n="foot_support">Support</h4>
+        <a href="#" data-i18n="foot_shipping">Shipping Info</a>
+        <a href="#" data-i18n="foot_returns">Returns</a>
+        <a href="#" data-i18n="foot_contact">Contact Us</a>
+        <a href="#" data-i18n="foot_faq">FAQ</a>
+      </div>
+      <div class="foot-col">
+        <h4 data-i18n="foot_company">Company</h4>
+        <a href="#" data-i18n="foot_about_link">About</a>
+        <a href="#" data-i18n="foot_careers">Careers</a>
+        <a href="#" data-i18n="foot_wholesale">Wholesale</a>
+        <a href="admin-login.html" data-i18n="foot_management">Management</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span data-i18n="foot_rights">© 2026 Aram Toys. All rights reserved.</span>
+      <button class="lang-toggle" aria-label="Change language">English</button>
+      <span class="mono" data-i18n="foot_made">Made with 🧡 in Cairo</span>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="assets/js/supabase-client.js"></script>
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/cart.js"></script>
+<script src="assets/js/catalog.js"></script>
+<script>
+  let currentUserName = null;
+
+  function renderGreeting() {
+    const greetingEl = document.getElementById('user-greeting');
+    if (currentUserName) {
+      greetingEl.textContent = `${t('greeting_hello')} ${currentUserName}`;
+      greetingEl.style.display = 'inline-block';
+      document.getElementById('account-link').href = 'account.html';
+    } else {
+      greetingEl.style.display = 'none';
+      document.getElementById('account-link').href = 'login.html';
+    }
+  }
+
+  async function checkLoggedInUser() {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (!session) { renderGreeting(); return; }
+
+    const { data: profile } = await supabaseClient
+      .from('profiles')
+      .select('full_name')
+      .eq('id', session.user.id)
+      .single();
+
+    currentUserName = profile && profile.full_name ? profile.full_name : null;
+    renderGreeting();
+  }
+
+  document.addEventListener('langchange', renderGreeting);
+  checkLoggedInUser();
+</script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__claude_ai_Supabase__query_logs",
+      "Bash(curl -s -X POST https://vwlbidzccpxccowkhchy.supabase.co/auth/v1/signup -H 'apikey: sb_publishable_jOnyXV1B8YkNTcg1X9GBnQ_0TdXoACG' -H 'Content-Type: application/json' -d '{\"email\":\"test.aramtoys.qa@example.com\",\"password\":\"TestPass123!\"}')",
+      "Bash(curl -s -X POST https://vwlbidzccpxccowkhchy.supabase.co/auth/v1/signup -H 'apikey: sb_publishable_jOnyXV1B8YkNTcg1X9GBnQ_0TdXoACG' -H 'Content-Type: application/json' -d '{\"email\":\"gustomotaz+aramqa@gmail.com\",\"password\":\"TestPass123!\"}')",
+      "Bash(curl -s -X POST https://vwlbidzccpxccowkhchy.supabase.co/auth/v1/token?grant_type=password -H 'apikey: sb_publishable_jOnyXV1B8YkNTcg1X9GBnQ_0TdXoACG' -H 'Content-Type: application/json' -d '{\"email\":\"gustomotaz+aramqa@gmail.com\",\"password\":\"TestPass123!\"}')",
+      "Read(//tmp/**)"
+    ]
+  }
+}

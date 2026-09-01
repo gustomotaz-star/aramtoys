@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Management — Aram Toys</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FBF6EC; --ink:#2B2A4C; --coral:#FF6B5B; --mustard:#FFC145; --mint:#4ECDC4;
+    --paper:#FFFFFF; --line: rgba(43,42,76,0.12);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background:var(--ink); color:var(--cream); font-family:'Nunito Sans', sans-serif;
+    min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px;
+  }
+  a{color:inherit;}
+  .block-logo{ display:flex; gap:4px; justify-content:center; margin-bottom:24px; }
+  .block-logo .tile{
+    width:34px; height:34px; border-radius:8px;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Baloo 2', sans-serif; font-weight:800; font-size:18px; color:#fff;
+  }
+  .block-logo .tile:nth-child(1){background:var(--coral);}
+  .block-logo .tile:nth-child(2){background:var(--mustard); color:var(--ink);}
+  .block-logo .tile:nth-child(3){background:var(--mint);}
+  .block-logo .tile:nth-child(4){background:rgba(251,246,236,0.15);}
+
+  .card{
+    background:var(--cream); color:var(--ink);
+    border-radius:22px; padding:40px 36px; width:100%; max-width:380px;
+  }
+  h1{ font-family:'Baloo 2', sans-serif; font-size:22px; text-align:center; margin-bottom:6px; }
+  .sub{ text-align:center; color:rgba(43,42,76,0.6); font-size:13px; margin-bottom:28px; }
+
+  label{ display:block; font-size:13px; font-weight:700; margin-bottom:6px; margin-top:16px; }
+  input{
+    width:100%; padding:12px 14px; border-radius:12px;
+    border:2px solid var(--line); font-family:inherit; font-size:15px;
+  }
+  input:focus{ outline:none; border-color:var(--mint); }
+
+  .submit-btn{
+    width:100%; margin-top:24px; padding:14px; border-radius:14px;
+    background:var(--ink); color:var(--cream); font-weight:800; font-size:15px;
+    border:none; cursor:pointer;
+  }
+  .submit-btn:disabled{ opacity:0.6; cursor:default; }
+
+  .msg{ margin-top:16px; font-size:13px; text-align:center; color:var(--coral); }
+  .back{ display:block; text-align:center; margin-top:20px; font-size:13px; color:rgba(43,42,76,0.5); text-decoration:none; }
+</style>
+</head>
+<body>
+
+<div>
+  <a href="index.html" class="block-logo" aria-label="Aram Toys">
+    <span class="tile">A</span><span class="tile">R</span><span class="tile">A</span><span class="tile">M</span>
+  </a>
+  <div class="card">
+    <h1>Management</h1>
+    <p class="sub">Owner access only</p>
+
+    <form id="admin-form">
+      <label for="email">Email</label>
+      <input type="email" id="email" required autocomplete="email">
+
+      <label for="password">Password</label>
+      <input type="password" id="password" required autocomplete="current-password">
+
+      <button type="submit" class="submit-btn" id="submit-btn">Sign In</button>
+      <p class="msg" id="msg"></p>
+    </form>
+
+    <a href="index.html" class="back">← Back to shop</a>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="assets/js/supabase-client.js"></script>
+<script>
+  const form = document.getElementById('admin-form');
+  const submitBtn = document.getElementById('submit-btn');
+  const msg = document.getElementById('msg');
+
+  async function redirectIfAdmin() {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (!session) return;
+    const { data: profile } = await supabaseClient.from('profiles').select('is_admin').eq('id', session.user.id).single();
+    if (profile && profile.is_admin) window.location.href = 'admin-dashboard.html';
+  }
+  redirectIfAdmin();
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+
+    submitBtn.disabled = true;
+    msg.textContent = '';
+
+    const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+    if (error) {
+      msg.textContent = error.message;
+      submitBtn.disabled = false;
+      return;
+    }
+
+    const { data: profile } = await supabaseClient.from('profiles').select('is_admin').eq('id', data.user.id).single();
+    if (!profile || !profile.is_admin) {
+      await supabaseClient.auth.signOut();
+      msg.textContent = 'This account does not have management access.';
+      submitBtn.disabled = false;
+      return;
+    }
+
+    window.location.href = 'admin-dashboard.html';
+  });
+</script>
+</body>
+</html>

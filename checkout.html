@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkout — Aram Toys</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito+Sans:wght@400;600;700;800&family=Space+Mono:wght@700&family=Baloo+Bhaijaan+2:wght@600;700;800&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/rtl.css">
+<style>
+  :root{
+    --cream:#FBF6EC; --ink:#2B2A4C; --coral:#FF6B5B; --mustard:#FFC145; --mint:#4ECDC4;
+    --paper:#FFFFFF; --line: rgba(43,42,76,0.12);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{ background:var(--cream); color:var(--ink); font-family:'Nunito Sans', sans-serif; }
+  a{color:inherit; text-decoration:none;}
+  .wrap{ max-width:640px; margin:0 auto; padding:40px 24px; }
+
+  header{ display:flex; align-items:center; justify-content:space-between; margin-bottom:32px; }
+  .block-logo{ display:flex; gap:4px; }
+  .block-logo .tile{
+    width:30px; height:30px; border-radius:7px;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Baloo 2', sans-serif; font-weight:800; font-size:15px; color:var(--paper);
+  }
+  .block-logo .tile:nth-child(1){background:var(--coral);}
+  .block-logo .tile:nth-child(2){background:var(--mustard); color:var(--ink);}
+  .block-logo .tile:nth-child(3){background:var(--mint);}
+  .block-logo .tile:nth-child(4){background:var(--ink);}
+  .back-link{ font-weight:700; font-size:14px; color:rgba(43,42,76,0.6); }
+
+  h1{ font-family:'Baloo 2', sans-serif; font-size:26px; margin-bottom:24px; }
+
+  .card{ background:var(--paper); border:1px solid var(--line); border-radius:18px; padding:24px; margin-bottom:20px; }
+  .card h2{ font-family:'Baloo 2', sans-serif; font-size:16px; margin-bottom:16px; }
+
+  .addr-option{
+    display:flex; align-items:flex-start; gap:10px; padding:12px; border:2px solid var(--line);
+    border-radius:12px; margin-bottom:10px; cursor:pointer;
+  }
+  .addr-option.selected{ border-color:var(--mint); background:rgba(78,205,196,0.08); }
+  .addr-option input{ margin-top:3px; }
+  .addr-text{ font-size:14px; }
+  .addr-label{ font-weight:800; display:block; margin-bottom:2px; }
+
+  .toggle-form{ font-size:13px; font-weight:700; color:var(--coral); cursor:pointer; background:none; border:none; padding:0; font-family:inherit; }
+
+  form.addr-form{ display:none; margin-top:14px; }
+  form.addr-form.open{ display:block; }
+  form.addr-form input{
+    width:100%; padding:11px 13px; border-radius:10px; border:2px solid var(--line);
+    font-family:inherit; font-size:14px; margin-bottom:10px;
+  }
+  form.addr-form input:focus{ outline:none; border-color:var(--mint); }
+  .save-addr-btn{
+    padding:10px 18px; border-radius:10px; background:var(--ink); color:var(--cream);
+    border:none; font-weight:700; cursor:pointer; font-family:inherit; font-size:13px;
+  }
+
+  .pay-option{
+    display:flex; align-items:center; gap:10px; padding:14px; border:2px solid var(--line);
+    border-radius:12px; margin-bottom:10px;
+  }
+  .pay-option.selected{ border-color:var(--mint); background:rgba(78,205,196,0.08); }
+  .pay-option.disabled{ opacity:0.5; }
+  .pay-label{ font-weight:700; font-size:14px; }
+  .pay-note{ font-size:12px; color:rgba(43,42,76,0.55); }
+
+  .summary-row{ display:flex; justify-content:space-between; padding:6px 0; font-size:14px; }
+  .summary-row.total{ font-size:17px; font-weight:800; border-top:1px solid var(--line); margin-top:8px; padding-top:12px; }
+
+  .place-btn{
+    width:100%; margin-top:8px; padding:15px; border-radius:14px;
+    background:var(--coral); color:#fff; font-weight:800; font-size:15px; border:none; cursor:pointer; font-family:inherit;
+  }
+  .place-btn:disabled{ opacity:0.6; cursor:default; }
+  .msg{ margin-top:12px; font-size:13px; text-align:center; color:var(--coral); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a href="index.html" class="block-logo" aria-label="Aram Toys">
+      <span class="tile">A</span><span class="tile">R</span><span class="tile">A</span><span class="tile">M</span>
+    </a>
+    <div style="display:flex; align-items:center; gap:14px;">
+      <button class="lang-toggle" aria-label="Change language">English</button>
+      <a href="cart.html" class="back-link" data-i18n="checkout_back">← Back to Cart</a>
+    </div>
+  </header>
+
+  <h1 data-i18n="checkout_title">Checkout</h1>
+
+  <div class="card">
+    <h2 data-i18n="checkout_address_title">Shipping Address</h2>
+    <div id="address-list"></div>
+    <button class="toggle-form" id="toggle-addr-form" type="button" data-i18n="checkout_add_address">+ Add a new address</button>
+    <form class="addr-form" id="addr-form">
+      <input type="text" id="addr-label" data-i18n-placeholder="checkout_label_ph" placeholder="Label (e.g. Home)" required>
+      <input type="text" id="addr-full" data-i18n-placeholder="checkout_full_ph" placeholder="Full address (street, building, floor)" required>
+      <input type="text" id="addr-city" data-i18n-placeholder="checkout_city_ph" placeholder="City" required>
+      <input type="text" id="addr-governorate" data-i18n-placeholder="checkout_governorate_ph" placeholder="Governorate" required>
+      <input type="tel" id="addr-phone" data-i18n-placeholder="checkout_phone_ph" placeholder="Phone number" required>
+      <button type="submit" class="save-addr-btn" data-i18n="checkout_save_address">Save Address</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <h2 data-i18n="checkout_payment_title">Payment Method</h2>
+    <label class="pay-option selected" id="pay-cash">
+      <input type="radio" name="payment" value="cash" checked>
+      <div>
+        <div class="pay-label" data-i18n="checkout_cash">Cash on Delivery</div>
+        <div class="pay-note" data-i18n="checkout_cash_note">Pay when your order arrives</div>
+      </div>
+    </label>
+    <label class="pay-option disabled">
+      <input type="radio" name="payment" value="card" disabled>
+      <div>
+        <div class="pay-label" data-i18n="checkout_card">Credit / Debit Card (Visa)</div>
+        <div class="pay-note" data-i18n="checkout_card_note">Coming soon</div>
+      </div>
+    </label>
+  </div>
+
+  <div class="card">
+    <h2 data-i18n="checkout_summary_title">Order Summary</h2>
+    <div id="order-summary"></div>
+    <button class="place-btn" id="place-order-btn" data-i18n="checkout_place_order">Place Order</button>
+    <p class="msg" id="msg"></p>
+  </div>
+
+  <div style="text-align:center; margin-top:20px;">
+    <button class="lang-toggle" aria-label="Change language">English</button>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="assets/js/supabase-client.js"></script>
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/cart.js"></script>
+<script>
+  let selectedAddressId = null;
+  let user = null;
+
+  async function init() {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (!session) { window.location.href = 'login.html'; return; }
+    user = session.user;
+
+    const cart = getCart();
+    if (!cart.length) { window.location.href = 'cart.html'; return; }
+
+    renderSummary(cart);
+    await loadAddresses();
+  }
+
+  function renderSummary(cart) {
+    const subtotal = getCartSubtotal();
+    const shipping = getShippingFee(subtotal);
+    document.getElementById('order-summary').innerHTML = `
+      ${cart.map(i => `<div class="summary-row"><span>${i.name} × ${i.quantity}</span><span>${(i.price * i.quantity).toFixed(0)} EGP</span></div>`).join('')}
+      <div class="summary-row"><span>${t('cart_shipping')}</span><span>${shipping === 0 ? t('cart_free') : shipping.toFixed(0) + ' EGP'}</span></div>
+      <div class="summary-row total"><span>${t('cart_total')}</span><span>${(subtotal + shipping).toFixed(0)} EGP</span></div>
+    `;
+  }
+  document.addEventListener('langchange', () => renderSummary(getCart()));
+
+  async function loadAddresses() {
+    const { data, error } = await supabaseClient
+      .from('addresses')
+      .select('*')
+      .eq('customer_id', user.id)
+      .order('created_at', { ascending: false });
+
+    if (error) { console.error(error); return; }
+
+    const listEl = document.getElementById('address-list');
+    if (!data.length) {
+      listEl.innerHTML = `<p style="font-size:14px;color:rgba(43,42,76,0.55);">${t('checkout_no_addresses')}</p>`;
+      document.getElementById('addr-form').classList.add('open');
+      return;
+    }
+
+    listEl.innerHTML = data.map(a => `
+      <label class="addr-option" data-id="${a.id}">
+        <input type="radio" name="address" value="${a.id}">
+        <div class="addr-text">
+          <span class="addr-label">${a.label || 'Address'}</span>
+          ${a.full_address}, ${a.city || ''} ${a.governorate || ''}<br>${a.phone || ''}
+        </div>
+      </label>
+    `).join('');
+
+    selectedAddressId = data[0].id;
+    const first = listEl.querySelector('.addr-option');
+    first.classList.add('selected');
+    first.querySelector('input').checked = true;
+  }
+
+  document.getElementById('address-list').addEventListener('click', (e) => {
+    const opt = e.target.closest('.addr-option');
+    if (!opt) return;
+    document.querySelectorAll('.addr-option').forEach(o => o.classList.remove('selected'));
+    opt.classList.add('selected');
+    opt.querySelector('input').checked = true;
+    selectedAddressId = opt.dataset.id;
+  });
+
+  document.getElementById('toggle-addr-form').addEventListener('click', () => {
+    document.getElementById('addr-form').classList.toggle('open');
+  });
+
+  document.getElementById('addr-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const payload = {
+      customer_id: user.id,
+      label: document.getElementById('addr-label').value.trim(),
+      full_address: document.getElementById('addr-full').value.trim(),
+      city: document.getElementById('addr-city').value.trim(),
+      governorate: document.getElementById('addr-governorate').value.trim(),
+      phone: document.getElementById('addr-phone').value.trim()
+    };
+    const { error } = await supabaseClient.from('addresses').insert(payload);
+    if (error) { document.getElementById('msg').textContent = error.message; return; }
+    document.getElementById('addr-form').reset();
+    document.getElementById('addr-form').classList.remove('open');
+    await loadAddresses();
+  });
+
+  document.getElementById('place-order-btn').addEventListener('click', async () => {
+    const msg = document.getElementById('msg');
+    msg.textContent = '';
+
+    if (!selectedAddressId) {
+      msg.textContent = t('checkout_select_address');
+      return;
+    }
+
+    const btn = document.getElementById('place-order-btn');
+    btn.disabled = true;
+    btn.textContent = t('checkout_placing');
+
+    const items = getCart().map(i => ({ product_id: i.id, quantity: i.quantity }));
+
+    const { data, error } = await supabaseClient.rpc('place_order', {
+      p_items: items,
+      p_address_id: selectedAddressId,
+      p_payment_method: 'cash'
+    });
+
+    if (error) {
+      msg.textContent = error.message;
+      btn.disabled = false;
+      btn.textContent = t('checkout_place_order');
+      return;
+    }
+
+    clearCart();
+    window.location.href = `order-confirmation.html?order=${data}`;
+  });
+
+  init();
+</script>
+</body>
+</html>
