@@ -3,7 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import Logo from '../components/Logo';
 import { useAuth } from '../context/AuthContext';
 import { APP, ORDER_STATUSES, formatMoney, statusLabel } from '../config/app';
-import { supabase } from '../lib/supabase';
+import { createProduct, getAdminSnapshot, markOrderPaid, updateOrderStatus, updateProduct } from '../services/adminService';
+import { uploadProductImage } from '../services/storageService';
 
 const emptyProduct = { name: '', name_ar: '', category_id: '', price: '', stock_quantity: '', badge: '' };
 
@@ -26,14 +27,12 @@ export default function AdminDashboardPage() {
 
   const loadAll = async () => {
     setLoading(true);
-    const [orderRes, customerRes, productRes, categoryRes] = await Promise.all([
-      supabase.from('orders').select('*, order_items(product_name, quantity), addresses(full_address, city, governorate, phone), profiles(email, full_name, phone)').order('created_at', { ascending: false }),
-      supabase.from('profiles').select('id, email, full_name, phone, is_admin, created_at').order('created_at', { ascending: false }),
-      supabase.from('products').select('id, name, name_ar, price, stock_quantity, image_url, badge, is_active, categories(name)').order('name'),
-      supabase.from('categories').select('id, name').order('name'),
-    ]);
-    for (const result of [orderRes, customerRes, productRes, categoryRes]) if (result.error) console.error(result.error);
-    setOrders(orderRes.data || []); setCustomers(customerRes.data || []); setProducts(productRes.data || []); setCategories(categoryRes.data || []);
+    const snapshot = await getAdminSnapshot();
+    for (const result of [snapshot.orders, snapshot.customers, snapshot.products, snapshot.categories]) if (result.error) console.error(result.error);
+    setOrders(snapshot.orders.data || []);
+    setCustomers(snapshot.customers.data || []);
+    setProducts(snapshot.products.data || []);
+    setCategories(snapshot.categories.data || []);
     setLoading(false);
   };
 
@@ -60,41 +59,39 @@ export default function AdminDashboardPage() {
   }), [orders, search, statusFilter, paymentFilter]);
 
   const setOrderStatus = async (orderId, status) => {
-    const { error } = await supabase.from('orders').update({ status }).eq('id', orderId);
+    const { error } = await updateOrderStatus(orderId, status);
     if (error) { setMessage({ type: 'error', text: error.message }); return; }
     await loadAll();
   };
 
   const markPaid = async (orderId) => {
-    const { error } = await supabase.from('orders').update({ payment_status: 'paid' }).eq('id', orderId);
+    const { error } = await markOrderPaid(orderId);
     if (error) { setMessage({ type: 'error', text: error.message }); return; }
     await loadAll();
   };
 
   const saveProduct = async (product) => {
-    const { error } = await supabase.from('products').update({ name: product.name, price: Number(product.price), stock_quantity: Number(product.stock_quantity), is_active: product.is_active }).eq('id', product.id);
+    const { error } = await updateProduct(product);
     if (error) { setMessage({ type: 'error', text: error.message }); return; }
     await loadAll();
-  };
-
-  const uploadImage = async (file) => {
-    const safeName = file.name.replace(/[^a-zA-Z0-9.\-]/g, '_');
-    const path = `${Date.now()}-${safeName}`;
-    const { error } = await supabase.storage.from('product-images').upload(path, file);
-    if (error) throw error;
-    return supabase.storage.from('product-images').getPublicUrl(path).data.publicUrl;
   };
 
   const addProduct = async (event) => {
     event.preventDefault(); setMessage(null);
     try {
       let imageUrl = null;
-      if (newImage) imageUrl = await uploadImage(newImage);
+      if (newImage) imageUrl = await uploadProductImage(newImage);
       const slugBase = newProduct.name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'product';
-      const { error } = await supabase.from('products').insert({
-        name: newProduct.name.trim(), name_ar: newProduct.name_ar.trim() || null, category_id: newProduct.category_id,
-        price: Number(newProduct.price), stock_quantity: Number(newProduct.stock_quantity), badge: newProduct.badge.trim() || null,
-        image_url: imageUrl, slug: `${slugBase}-${Date.now().toString(36)}`, is_active: true,
+      const { error } = await createProduct({
+        name: newProduct.name.trim(),
+        name_ar: newProduct.name_ar.trim() || null,
+        category_id: newProduct.category_id,
+        price: Number(newProduct.price),
+        stock_quantity: Number(newProduct.stock_quantity),
+        badge: newProduct.badge.trim() || null,
+        image_url: imageUrl,
+        slug: `${slugBase}-${Date.now().toString(36)}`,
+        is_active: true,
       });
       if (error) throw error;
       setNewProduct(emptyProduct); setNewImage(null); setShowProductForm(false); await loadAll();
