@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import Header from '../components/Header';
 import ProductCard from '../components/ProductCard';
-import { supabase } from '../lib/supabase';
 import { useI18n } from '../context/I18nContext';
+import { getCategoryBySlug, getProductsByCategory } from '../services/catalogService';
 
 export default function CategoryPage() {
   const { slug } = useParams();
@@ -15,15 +15,10 @@ export default function CategoryPage() {
   useEffect(() => {
     (async () => {
       setLoading(true);
-      const { data: cat, error: catError } = await supabase.from('categories').select('*').eq('slug', slug).single();
+      const { data: cat, error: catError } = await getCategoryBySlug(slug);
       if (catError || !cat) { setCategory(null); setLoading(false); return; }
       setCategory(cat);
-      const { data: prods, error: prodError } = await supabase
-        .from('products')
-        .select('id, name, name_ar, price, image_url, badge, stock_quantity, categories(name, name_ar)')
-        .eq('category_id', cat.id)
-        .eq('is_active', true)
-        .order('created_at', { ascending: false });
+      const { data: prods, error: prodError } = await getProductsByCategory(cat.id);
       if (prodError) console.error(prodError);
       setProducts(prods || []);
       setLoading(false);
