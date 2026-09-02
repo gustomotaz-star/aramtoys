@@ -9,7 +9,7 @@ export default function HomeFooter() {
       <div className="container">
         <div className="foot-grid">
           <div className="foot-about">
-            <Logo compact />
+            <Logo />
             <p>{ar ? 'آرام تويز متجر ألعاب من القاهرة، بيوصل لعب آمن ومحفّز للخيال لأطفال مصر.' : 'Aram Toys is a Cairo-based toy shop bringing safe, imagination-first play to kids across Egypt.'}</p>
           </div>
           <div className="foot-col">
