@@ -1,32 +1,34 @@
-import { Link, NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Logo from './Logo';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { useI18n } from '../context/I18nContext';
 
 export default function Header() {
-  const { user, profile, signOut } = useAuth();
+  const { user } = useAuth();
   const { count } = useCart();
-  const { lang, toggleLang, t } = useI18n();
+  const { lang, toggleLang } = useI18n();
 
   return (
     <header className="site-header">
       <div className="container nav-shell">
         <Logo />
+
         <nav className="main-nav" aria-label="Primary navigation">
-          <NavLink to="/">{t('shop')}</NavLink>
-          <a href="/#categories">{t('categories')}</a>
+          <a href="/#products">{lang === 'ar' ? 'المتجر' : 'Shop'}</a>
+          <a href="/#categories">{lang === 'ar' ? 'التصنيفات' : 'Categories'}</a>
+          <a href="/#why-aram">{lang === 'ar' ? 'ليه آرام' : 'Why Aram'}</a>
+          <a href="/#newsletter">{lang === 'ar' ? 'النشرة البريدية' : 'Newsletter'}</a>
         </nav>
+
         <div className="nav-actions">
-          <button className="nav-text-btn" onClick={toggleLang}>{lang === 'ar' ? 'English' : 'العربية'}</button>
-          {user ? (
-            <Link className="icon-link" to="/account" title={profile?.full_name || t('account')}>👤</Link>
-          ) : (
-            <Link className="icon-link" to="/login" title={t('login')}>👤</Link>
-          )}
-          {profile?.is_admin && <Link className="nav-text-btn" to="/admin">{t('management')}</Link>}
-          <Link className="icon-link cart-link" to="/cart" title={t('cart')}>🧺{count > 0 && <span className="cart-count">{count}</span>}</Link>
-          {user && <button className="nav-text-btn hide-mobile" onClick={signOut}>{t('logout')}</button>}
+          <button className="lang-pill" onClick={toggleLang}>{lang === 'ar' ? 'English' : 'العربية'}</button>
+          <button className="icon-link" type="button" aria-label={lang === 'ar' ? 'بحث' : 'Search'}>🔍</button>
+          <Link className="icon-link" to={user ? '/account' : '/login'} aria-label={lang === 'ar' ? 'الحساب' : 'Account'}>👤</Link>
+          <Link className="icon-link cart-link" to="/cart" aria-label={lang === 'ar' ? 'السلة' : 'Cart'}>
+            🧺
+            {count > 0 && <span className="cart-count">{count}</span>}
+          </Link>
         </div>
       </div>
     </header>
