@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import ProductCard from '../components/ProductCard';
-import { supabase } from '../lib/supabase';
 import { useI18n } from '../context/I18nContext';
+import { getCategories, getFeaturedProducts } from '../services/catalogService';
 
 export default function HomePage() {
   const { lang, t } = useI18n();
@@ -14,8 +14,7 @@ export default function HomePage() {
   useEffect(() => {
     (async () => {
       const [{ data: cats, error: catError }, { data: prods, error: productError }] = await Promise.all([
-        supabase.from('categories').select('id, name, name_ar, slug, icon').order('name'),
-        supabase.from('products').select('id, name, name_ar, price, image_url, badge, stock_quantity, categories(name, name_ar)').eq('is_active', true).order('created_at', { ascending: false }).limit(8),
+        getCategories(), getFeaturedProducts(8),
       ]);
       if (catError) console.error(catError);
       if (productError) console.error(productError);
