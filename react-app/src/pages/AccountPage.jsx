@@ -3,8 +3,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import { useAuth } from '../context/AuthContext';
 import { useI18n } from '../context/I18nContext';
-import { supabase } from '../lib/supabase';
 import { formatMoney, statusLabel } from '../config/app';
+import { addAddress, getAddresses, updateProfile } from '../services/accountService';
+import { getUserOrders } from '../services/orderService';
 
 export default function AccountPage() {
   const { user, profile, refreshProfile, signOut } = useAuth();
@@ -20,8 +21,7 @@ export default function AccountPage() {
 
   const loadData = async () => {
     const [{ data: orderRows }, { data: addressRows }] = await Promise.all([
-      supabase.from('orders').select('id, status, payment_status, total, created_at').eq('customer_id', user.id).order('created_at', { ascending: false }),
-      supabase.from('addresses').select('*').eq('customer_id', user.id).order('created_at', { ascending: false }),
+      getUserOrders(user.id), getAddresses(user.id),
     ]);
     setOrders(orderRows || []);
     setAddresses(addressRows || []);
@@ -32,14 +32,14 @@ export default function AccountPage() {
 
   const saveProfile = async (event) => {
     event.preventDefault(); setMessage(null);
-    const { error } = await supabase.from('profiles').update({ full_name: form.full_name.trim() || null, email: form.email.trim() || null, phone: form.phone.trim() || null }).eq('id', user.id);
+    const { error } = await updateProfile(user.id, form);
     if (error) { setMessage({ type: 'error', text: error.message }); return; }
     await refreshProfile(); setEditing(false); setMessage({ type: 'success', text: lang === 'ar' ? 'تم حفظ البيانات.' : 'Profile saved.' });
   };
 
-  const addAddress = async (event) => {
+  const submitAddress = async (event) => {
     event.preventDefault(); setMessage(null);
-    const { error } = await supabase.from('addresses').insert({ ...addressForm, customer_id: user.id });
+    const { error } = await addAddress(user.id, addressForm);
     if (error) { setMessage({ type: 'error', text: error.message }); return; }
     setAddressForm({ label: 'Home', full_address: '', city: '', governorate: '', phone: '' });
     setShowAddressForm(false); await loadData();
@@ -74,7 +74,7 @@ export default function AccountPage() {
             <section className="card card-pad">
               <div className="row between wrap"><h2>{lang === 'ar' ? 'العناوين' : 'Addresses'}</h2><button className="btn btn-ghost" onClick={() => setShowAddressForm((v) => !v)}>{lang === 'ar' ? '+ إضافة عنوان' : '+ Add address'}</button></div>
               <div className="stack" style={{ marginTop: 14 }}>{addresses.map((address) => <div className="address-option" key={address.id}><strong>{address.label || 'Address'}</strong><div>{address.full_address}</div><div className="muted">{address.city || ''} {address.governorate || ''} · {address.phone || ''}</div></div>)}</div>
-              {showAddressForm && <form className="stack" onSubmit={addAddress} style={{ marginTop: 16 }}><div className="form-grid"><div className="field"><label className="label">Label</label><select className="select" value={addressForm.label} onChange={(e) => setAddressForm({ ...addressForm, label: e.target.value })}><option>Home</option><option>Work</option></select></div><div className="field"><label className="label">{lang === 'ar' ? 'الجوال' : 'Phone'}</label><input className="input" value={addressForm.phone} onChange={(e) => setAddressForm({ ...addressForm, phone: e.target.value })} /></div><div className="field"><label className="label">{lang === 'ar' ? 'المحافظة' : 'Governorate'}</label><input className="input" value={addressForm.governorate} onChange={(e) => setAddressForm({ ...addressForm, governorate: e.target.value })} required /></div><div className="field"><label className="label">{lang === 'ar' ? 'المنطقة' : 'Area'}</label><input className="input" value={addressForm.city} onChange={(e) => setAddressForm({ ...addressForm, city: e.target.value })} required /></div></div><div className="field"><label className="label">{lang === 'ar' ? 'العنوان الكامل' : 'Full address'}</label><input className="input" value={addressForm.full_address} onChange={(e) => setAddressForm({ ...addressForm, full_address: e.target.value })} required /></div><button className="btn btn-primary">{lang === 'ar' ? 'حفظ العنوان' : 'Save address'}</button></form>}
+              {showAddressForm && <form className="stack" onSubmit={submitAddress} style={{ marginTop: 16 }}><div className="form-grid"><div className="field"><label className="label">Label</label><select className="select" value={addressForm.label} onChange={(e) => setAddressForm({ ...addressForm, label: e.target.value })}><option>Home</option><option>Work</option></select></div><div className="field"><label className="label">{lang === 'ar' ? 'الجوال' : 'Phone'}</label><input className="input" value={addressForm.phone} onChange={(e) => setAddressForm({ ...addressForm, phone: e.target.value })} /></div><div className="field"><label className="label">{lang === 'ar' ? 'المحافظة' : 'Governorate'}</label><input className="input" value={addressForm.governorate} onChange={(e) => setAddressForm({ ...addressForm, governorate: e.target.value })} required /></div><div className="field"><label className="label">{lang === 'ar' ? 'المنطقة' : 'Area'}</label><input className="input" value={addressForm.city} onChange={(e) => setAddressForm({ ...addressForm, city: e.target.value })} required /></div></div><div className="field"><label className="label">{lang === 'ar' ? 'العنوان الكامل' : 'Full address'}</label><input className="input" value={addressForm.full_address} onChange={(e) => setAddressForm({ ...addressForm, full_address: e.target.value })} required /></div><button className="btn btn-primary">{lang === 'ar' ? 'حفظ العنوان' : 'Save address'}</button></form>}
             </section>
           </div>
         </div>
