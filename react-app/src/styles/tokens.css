@@ -1,0 +1,44 @@
+:root {
+  --color-bg: #FBF6EC;
+  --color-surface: #FFFFFF;
+  --color-ink: #2B2A4C;
+  --color-text-muted: rgba(43, 42, 76, .62);
+  --color-coral: #FF6B5B;
+  --color-mustard: #FFC145;
+  --color-mint: #4ECDC4;
+  --color-success: #1A8F5C;
+  --color-info: #3B6FD8;
+  --color-purple: #7259B6;
+  --color-danger: #D94B48;
+  --color-line: rgba(43, 42, 76, .12);
+  --color-overlay: rgba(251, 246, 236, .9);
+
+  --font-body: 'Tajawal', 'Nunito Sans', system-ui, sans-serif;
+  --font-display: 'Baloo 2', 'Tajawal', sans-serif;
+  --font-mono: 'Space Mono', monospace;
+
+  --radius-xs: 8px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-xl: 22px;
+  --radius-pill: 999px;
+
+  --shadow-card: 0 18px 40px -28px rgba(43, 42, 76, .42);
+  --shadow-hover: 0 18px 30px -16px rgba(43, 42, 76, .3);
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  --container: 1180px;
+  --container-admin: 1240px;
+  --header-height: 76px;
+  --transition: 180ms ease;
+}
