@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { useI18n } from '../context/I18nContext';
 import { formatMoney } from '../config/app';
-import { supabase } from '../lib/supabase';
+import { addUserAddress, getUserAddresses, placeOrder as submitOrder } from '../services/orderService';
 
 export default function CheckoutPage() {
   const { user } = useAuth();
@@ -20,7 +20,7 @@ export default function CheckoutPage() {
   const [form, setForm] = useState({ label: 'Home', full_address: '', city: '', governorate: '', phone: '' });
 
   const loadAddresses = async () => {
-    const { data, error } = await supabase.from('addresses').select('*').eq('customer_id', user.id).order('created_at', { ascending: false });
+    const { data, error } = await getUserAddresses(user.id);
     if (error) { setMessage({ type: 'error', text: error.message }); return; }
     setAddresses(data || []);
     if (!selected && data?.length) setSelected(data[0].id);
@@ -28,11 +28,11 @@ export default function CheckoutPage() {
   };
 
   useEffect(() => { if (user) loadAddresses(); }, [user]);
-  useEffect(() => { if (!items.length) navigate('/cart', { replace: true }); }, [items.length]);
+  useEffect(() => { if (!items.length) navigate('/cart', { replace: true }); }, [items.length, navigate]);
 
   const saveAddress = async (event) => {
     event.preventDefault(); setBusy(true); setMessage(null);
-    const { data, error } = await supabase.from('addresses').insert({ ...form, customer_id: user.id }).select().single();
+    const { data, error } = await addUserAddress(user.id, form);
     setBusy(false);
     if (error) { setMessage({ type: 'error', text: error.message }); return; }
     setForm({ label: 'Home', full_address: '', city: '', governorate: '', phone: '' });
@@ -44,11 +44,7 @@ export default function CheckoutPage() {
   const placeOrder = async () => {
     if (!selected) { setMessage({ type: 'error', text: lang === 'ar' ? 'اختر عنوان التوصيل.' : 'Select a shipping address.' }); return; }
     setBusy(true); setMessage(null);
-    const { data, error } = await supabase.rpc('place_order', {
-      p_items: items.map((item) => ({ product_id: item.id, quantity: item.quantity })),
-      p_address_id: selected,
-      p_payment_method: 'cash',
-    });
+    const { data, error } = await submitOrder({ items, addressId: selected, paymentMethod: 'cash' });
     setBusy(false);
     if (error) { setMessage({ type: 'error', text: error.message }); return; }
     clear();
