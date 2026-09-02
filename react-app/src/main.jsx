@@ -8,6 +8,7 @@ import { I18nProvider } from './context/I18nContext';
 import './styles/global.css';
 import './styles/storefront.css';
 import './styles/admin.css';
+import './styles/content.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
