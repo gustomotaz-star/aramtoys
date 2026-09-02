@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../components/Header';
+import HomeFooter from '../components/HomeFooter';
 import ProductCard from '../components/ProductCard';
 import { useI18n } from '../context/I18nContext';
 import { getCategories, getFeaturedProducts } from '../services/catalogService';
@@ -10,6 +11,8 @@ export default function HomePage() {
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [subscribed, setSubscribed] = useState(false);
+  const ar = lang === 'ar';
 
   useEffect(() => {
     (async () => {
@@ -24,90 +27,79 @@ export default function HomePage() {
     })();
   }, []);
 
-  const ar = lang === 'ar';
-
   return (
     <>
       <Header />
       <main>
-        <section className="home-hero container">
-          <div className="hero-copy-original">
-            <div className="eyebrow">{ar ? 'وصل جديد كل جمعة' : 'NEW DROPS EVERY FRIDAY'}</div>
-            <h1>
-              {ar ? <><span>ألعاب يلعب بيها </span><span className="accent">فعلاً</span><br />أكثر من مرة.</> : <>Toys they actually <span className="accent">play with</span><br />again and again.</>}
-            </h1>
-            <p className="lead">
-              {ar
-                ? 'آرام تويز يختار ألعاب متينة تنمي الخيال لأعمار من 0 لـ 12 سنة — مجربة من أطفال حقيقيين، ومعتمدة من الأهل.'
-                : 'Aram Toys picks durable, imagination-building toys for ages 0–12 — tested by real kids and approved by parents.'}
-            </p>
+        <section className="legacy-hero container">
+          <div className="legacy-hero-copy">
+            <span className="eyebrow">{ar ? 'وصل جديد كل جمعة' : 'New arrivals every friday'}</span>
+            <h1>{ar ? <><span>ألعاب يلعب بيها </span><span className="accent">فعلاً</span><br />أكثر من مرة.</> : <>Toys kids <span className="accent">actually</span><br />play with twice.</>}</h1>
+            <p className="lead">{ar ? 'آرام تويز يختار ألعاب متينة تنمي الخيال لأعمار من 0 لـ 12 سنة — مجربة من أطفال حقيقيين، ومعتمدة من الأهل.' : 'Aram Toys hand-picks durable, imagination-first toys for ages 0–12 — tested by real kids, approved by tired parents.'}</p>
             <div className="hero-cta">
-              <a className="btn btn-primary" href="#products">{ar ? 'تسوق المجموعة ←' : 'Shop the collection →'}</a>
-              <a className="btn btn-ghost" href="#categories">{ar ? 'تصفح التصنيفات' : 'Browse categories'}</a>
+              <a href="#shop" className="btn legacy-primary">{ar ? 'تسوق المجموعة ←' : 'Shop the collection →'}</a>
+              <a href="#categories" className="btn legacy-ghost">{ar ? 'تصفح التصنيفات' : 'Browse categories'}</a>
             </div>
             <div className="trust-row">
-              <span>🚚 {ar ? 'شحن مجاني فوق 800 جنيه' : 'Free shipping over EGP 800'}</span>
+              <span>🚚 {ar ? 'شحن مجاني فوق 800 جنيه' : 'Free shipping over 800 EGP'}</span>
               <span>♻️ {ar ? 'خامات آمنة وغير سامة' : 'Safe, non-toxic materials'}</span>
               <span>⭐ {ar ? '4.9/5 من أكثر من 3,200 من الأهل' : '4.9/5 from 3,200+ parents'}</span>
             </div>
           </div>
-
-          <div className="hero-visual-original" aria-hidden="true">
+          <div className="legacy-hero-visual" aria-hidden="true">
             <div className="blob blob-1" />
             <div className="blob blob-2" />
             <div className="hero-blocks">
-              <span className="tile">A</span>
-              <span className="tile">R</span>
-              <span className="tile">A</span>
-              <span className="tile">M</span>
+              <span className="tile">A</span><span className="tile">R</span><span className="tile">A</span><span className="tile">M</span>
             </div>
             <div className="shelf" />
           </div>
         </section>
 
-        <section className="section" id="categories">
-          <div className="container">
-            <div className="section-head">
-              <div>
-                <span className="section-tag">{ar ? 'اختار حسب النوع' : 'SHOP BY TYPE'}</span>
-                <h2>{ar ? 'التصنيفات' : 'Categories'}</h2>
-              </div>
-            </div>
-            <div className="category-grid original-categories">
-              {categories.map((category) => (
-                <Link className="category-card" to={`/category/${category.slug}`} key={category.id}>
-                  <div className="category-icon">{category.icon || '🧸'}</div>
-                  <strong>{ar ? (category.name_ar || category.name) : category.name}</strong>
-                </Link>
-              ))}
-            </div>
+        <section className="legacy-section container" id="categories">
+          <div className="legacy-section-head">
+            <div><span className="section-tag">{ar ? 'اعثر على لعبته المفضلة' : 'Find their favorite'}</span><h2>{ar ? 'تسوق حسب التصنيف' : 'Shop by category'}</h2></div>
+            <p className="section-sub">{ar ? 'من ألعاب الرضع الآمنة إلى الألغاز الطويلة — مرتبة بالطريقة التي يبحث بها الأهل فعلاً.' : 'From nursery-safe rattles to weekend-long puzzles — sorted the way parents actually search.'}</p>
+          </div>
+          <div className="legacy-cat-grid">
+            {categories.map((category) => (
+              <Link className="legacy-cat-card" to={`/category/${category.slug}`} key={category.id}>
+                <div className="legacy-cat-icon">{category.icon || '🧸'}</div>
+                <h3>{ar ? (category.name_ar || category.name) : category.name}</h3>
+              </Link>
+            ))}
           </div>
         </section>
 
-        <section className="section" id="products">
-          <div className="container">
-            <div className="section-head">
-              <div>
-                <span className="section-tag">{ar ? 'الأكثر طلباً' : 'POPULAR PICKS'}</span>
-                <h2>{ar ? 'ألعاب مختارة' : 'Featured toys'}</h2>
-              </div>
-            </div>
-            {loading ? <div className="empty">{ar ? 'جاري تحميل المنتجات...' : 'Loading products...'}</div> : (
-              <div className="product-grid">
-                {products.map((product) => <ProductCard key={product.id} product={product} />)}
-              </div>
-            )}
+        <section className="legacy-section container" id="shop">
+          <div className="legacy-section-head">
+            <div><span className="section-tag">{ar ? 'الأكثر مبيعاً' : 'Best sellers'}</span><h2>{ar ? 'محبوبة من الأيدي الصغيرة' : 'Loved by little hands'}</h2></div>
+            <p className="section-sub">{ar ? 'الألعاب الأكثر إعادةً للطلب في المتجر هذا الشهر.' : 'The most re-ordered toys in the shop, this month.'}</p>
+          </div>
+          {loading ? <div className="empty">{ar ? 'جاري تحميل المنتجات...' : 'Loading products...'}</div> : <div className="legacy-prod-grid">{products.map((product) => <ProductCard key={product.id} product={product} />)}</div>}
+        </section>
+
+        <section className="legacy-section container" id="why">
+          <div className="why-grid">
+            {[
+              ['01', ar ? 'مجرّبة من الأهل' : 'Parent-tested', ar ? 'كل لعبة تروح لأسرة حقيقية قبل ما تنزل على الرف.' : 'Every toy goes home with a real family before it goes on the shelf.'],
+              ['02', ar ? 'السلامة أولاً' : 'Safety-first materials', ar ? 'ألوان غير سامة، حواف مستديرة، وتصنيف عمري واضح.' : 'Non-toxic paints, rounded edges, and age labels you can trust.'],
+              ['03', ar ? 'توصيل سريع بالقاهرة' : 'Fast Cairo delivery', ar ? 'تجهيز الطلبات في نفس اليوم للطلبات المبكرة.' : 'Same-day dispatch on orders placed before 3pm.'],
+              ['04', ar ? 'إرجاع سهل خلال 14 يوم' : 'Easy 14-day returns', ar ? 'لو اللعبة ما ناسبتش، رجعها بسهولة.' : "Didn't land? Send it back — no questions, no hassle."],
+            ].map(([num,title,desc]) => <div className="why-item" key={num}><div className="num">{num}</div><h3>{title}</h3><p>{desc}</p></div>)}
           </div>
         </section>
 
-        <section className="section" id="why-aram">
-          <div className="container"><div className="card card-pad"><h2>{ar ? 'ليه آرام؟' : 'Why Aram?'}</h2><p className="muted">{ar ? 'اختيارات عملية، متينة، ممتعة ومناسبة لعمر الطفل.' : 'Practical, durable and fun toys chosen for each age.'}</p></div></div>
-        </section>
-        <section className="section" id="newsletter">
-          <div className="container"><div className="card card-pad"><h2>{ar ? 'النشرة البريدية' : 'Newsletter'}</h2><p className="muted">{ar ? 'تابع أحدث الألعاب والعروض.' : 'Get new toys and offers in your inbox.'}</p></div></div>
+        <section className="legacy-newsletter container" id="newsletter">
+          <h2>{ar ? 'كن أول من يعرف عن الجديد' : 'Get first pick of new arrivals'}</h2>
+          <p>{ar ? 'إيميل واحد في الأسبوع. ألعاب جديدة، تجديد مخزون، ونصائح للأهل أحياناً.' : 'One email a week. New toys, restocks, and the odd parenting tip.'}</p>
+          <form className="news-form" onSubmit={(e) => { e.preventDefault(); setSubscribed(true); }}>
+            <input type="email" placeholder={ar ? 'بريدك الإلكتروني' : 'you@example.com'} required aria-label="Email address" />
+            <button type="submit" className="btn legacy-primary">{subscribed ? (ar ? 'تم الاشتراك ✓' : 'Subscribed ✓') : (ar ? 'اشترك' : 'Subscribe')}</button>
+          </form>
         </section>
       </main>
-      <footer className="site-footer"><div className="container">© 2026 Aram Toys</div></footer>
+      <HomeFooter />
     </>
   );
 }
