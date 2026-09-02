@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import Logo from './Logo';
 import { useI18n } from '../context/I18nContext';
 
@@ -14,24 +15,24 @@ export default function HomeFooter() {
           </div>
           <div className="foot-col">
             <h4>{ar ? 'المتجر' : 'Shop'}</h4>
-            <a href="#categories">{ar ? 'مكعبات البناء' : 'Building Blocks'}</a>
-            <a href="#categories">{ar ? 'دمى وشخصيات' : 'Dolls & Figures'}</a>
-            <a href="#categories">{ar ? 'ألعاب خارجية' : 'Outdoor Play'}</a>
-            <a href="#categories">{ar ? 'ألغاز وألعاب' : 'Puzzles & Games'}</a>
+            <Link to="/category/building-blocks">{ar ? 'مكعبات البناء' : 'Building Blocks'}</Link>
+            <Link to="/category/dolls-figures">{ar ? 'دمى وشخصيات' : 'Dolls & Figures'}</Link>
+            <Link to="/category/outdoor-play">{ar ? 'ألعاب خارجية' : 'Outdoor Play'}</Link>
+            <Link to="/category/puzzles-games">{ar ? 'ألغاز وألعاب' : 'Puzzles & Games'}</Link>
           </div>
           <div className="foot-col">
             <h4>{ar ? 'الدعم' : 'Support'}</h4>
-            <a href="#">{ar ? 'معلومات الشحن' : 'Shipping Info'}</a>
-            <a href="#">{ar ? 'الإرجاع' : 'Returns'}</a>
-            <a href="#">{ar ? 'اتصل بنا' : 'Contact Us'}</a>
-            <a href="#">{ar ? 'الأسئلة الشائعة' : 'FAQ'}</a>
+            <Link to="/info/shipping">{ar ? 'معلومات الشحن' : 'Shipping Info'}</Link>
+            <Link to="/info/returns">{ar ? 'الإرجاع' : 'Returns'}</Link>
+            <Link to="/info/contact">{ar ? 'اتصل بنا' : 'Contact Us'}</Link>
+            <Link to="/info/faq">{ar ? 'الأسئلة الشائعة' : 'FAQ'}</Link>
           </div>
           <div className="foot-col">
             <h4>{ar ? 'الشركة' : 'Company'}</h4>
-            <a href="#why">{ar ? 'من نحن' : 'About'}</a>
-            <a href="#">{ar ? 'وظائف' : 'Careers'}</a>
-            <a href="#">{ar ? 'بيع بالجملة' : 'Wholesale'}</a>
-            <a href="/admin/login">{ar ? 'الإدارة' : 'Management'}</a>
+            <Link to="/info/about">{ar ? 'من نحن' : 'About'}</Link>
+            <Link to="/info/careers">{ar ? 'وظائف' : 'Careers'}</Link>
+            <Link to="/info/wholesale">{ar ? 'بيع بالجملة' : 'Wholesale'}</Link>
+            <Link to="/admin/content">{ar ? 'الإدارة' : 'Management'}</Link>
           </div>
         </div>
         <div className="foot-bottom">
