@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import Logo from '../components/Logo';
-import { supabase } from '../lib/supabase';
 import { formatMoney } from '../config/app';
 import { useI18n } from '../context/I18nContext';
+import { getOrder } from '../services/orderService';
 
 export default function OrderConfirmationPage() {
   const { orderId } = useParams();
@@ -13,11 +13,7 @@ export default function OrderConfirmationPage() {
 
   useEffect(() => {
     (async () => {
-      const { data, error: queryError } = await supabase
-        .from('orders')
-        .select('id, total, shipping_fee, payment_method, status, created_at, order_items(product_name, quantity, line_total), addresses(full_address, city, governorate)')
-        .eq('id', orderId)
-        .single();
+      const { data, error: queryError } = await getOrder(orderId);
       if (queryError) setError(queryError.message); else setOrder(data);
     })();
   }, [orderId]);
