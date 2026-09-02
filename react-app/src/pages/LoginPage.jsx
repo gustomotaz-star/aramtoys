@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Logo from '../components/Logo';
-import { supabase } from '../lib/supabase';
-import { phoneToSyntheticEmail } from '../config/app';
 import { useAuth } from '../context/AuthContext';
 import { useI18n } from '../context/I18nContext';
+import { sendPasswordRecovery, signIn, signUp } from '../services/authService';
 
 export default function LoginPage() {
   const { user } = useAuth();
@@ -21,25 +20,20 @@ export default function LoginPage() {
   const [showRecovery, setShowRecovery] = useState(false);
   const [recoveryEmail, setRecoveryEmail] = useState('');
 
-  useEffect(() => { if (user) navigate(location.state?.from || '/account', { replace: true }); }, [user]);
+  useEffect(() => { if (user) navigate(location.state?.from || '/account', { replace: true }); }, [user, navigate, location.state]);
 
   const submit = async (event) => {
     event.preventDefault();
     setBusy(true); setMessage(null);
     try {
       if (mode === 'login') {
-        const email = identifier.includes('@') ? identifier.trim() : phoneToSyntheticEmail(identifier);
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { error } = await signIn(identifier, password);
         if (error) throw error;
         navigate(location.state?.from || '/account', { replace: true });
       } else {
         if (password !== confirm) throw new Error(lang === 'ar' ? 'كلمتا المرور غير متطابقتين.' : 'Passwords do not match.');
-        const email = method === 'email' ? identifier.trim() : phoneToSyntheticEmail(identifier);
-        const { data, error } = await supabase.auth.signUp({ email, password });
+        const { data, error } = await signUp({ identifier, password, method });
         if (error) throw error;
-        if (data.user && method === 'phone') {
-          await supabase.from('profiles').update({ phone: identifier.trim(), email: null }).eq('id', data.user.id);
-        }
         setMessage({ type: 'success', text: lang === 'ar' ? 'تم إنشاء الحساب.' : 'Account created.' });
         if (data.session) navigate('/account', { replace: true });
       }
@@ -52,7 +46,7 @@ export default function LoginPage() {
     event.preventDefault();
     setBusy(true); setMessage(null);
     const redirectTo = `${window.location.origin}/reset-password`;
-    const { error } = await supabase.auth.resetPasswordForEmail(recoveryEmail.trim(), { redirectTo });
+    const { error } = await sendPasswordRecovery(recoveryEmail, redirectTo);
     setBusy(false);
     setMessage(error
       ? { type: 'error', text: error.message }
@@ -74,8 +68,8 @@ export default function LoginPage() {
           </form>
         ) : (
           <>
-            <div className="auth-tabs"><button className={mode === 'login' ? 'active' : ''} onClick={() => setMode('login')}>{t('signIn')}</button><button className={mode === 'signup' ? 'active' : ''} onClick={() => setMode('signup')}>{t('createAccount')}</button></div>
-            {mode === 'signup' && <div className="auth-tabs"><button className={method === 'email' ? 'active' : ''} onClick={() => setMethod('email')}>{t('email')}</button><button className={method === 'phone' ? 'active' : ''} onClick={() => setMethod('phone')}>{t('phone')}</button></div>}
+            <div className="auth-tabs"><button type="button" className={mode === 'login' ? 'active' : ''} onClick={() => setMode('login')}>{t('signIn')}</button><button type="button" className={mode === 'signup' ? 'active' : ''} onClick={() => setMode('signup')}>{t('createAccount')}</button></div>
+            {mode === 'signup' && <div className="auth-tabs"><button type="button" className={method === 'email' ? 'active' : ''} onClick={() => setMethod('email')}>{t('email')}</button><button type="button" className={method === 'phone' ? 'active' : ''} onClick={() => setMethod('phone')}>{t('phone')}</button></div>}
             <form className="stack" onSubmit={submit}>
               <div className="field"><label className="label">{mode === 'login' ? t('emailOrPhone') : (method === 'email' ? t('email') : t('phone'))}</label><input className="input" value={identifier} onChange={(e) => setIdentifier(e.target.value)} required /></div>
               <div className="field"><label className="label">{t('password')}</label><input className="input" type="password" minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} required /></div>
