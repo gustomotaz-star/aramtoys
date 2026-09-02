@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Logo from '../components/Logo';
-import { supabase } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
+import { signInAdmin } from '../services/authService';
 
 export default function AdminLoginPage() {
   const { user, isAdmin, loading } = useAuth();
@@ -12,19 +12,13 @@ export default function AdminLoginPage() {
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState(null);
 
-  useEffect(() => { if (!loading && user && isAdmin) navigate('/admin', { replace: true }); }, [loading, user, isAdmin]);
+  useEffect(() => { if (!loading && user && isAdmin) navigate('/admin', { replace: true }); }, [loading, user, isAdmin, navigate]);
 
   const submit = async (event) => {
     event.preventDefault(); setBusy(true); setMessage(null);
-    const { data, error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
-    if (error) { setBusy(false); setMessage(error.message); return; }
-    const { data: profile, error: profileError } = await supabase.from('profiles').select('is_admin').eq('id', data.user.id).single();
-    if (profileError || !profile?.is_admin) {
-      await supabase.auth.signOut();
-      setBusy(false);
-      setMessage('This account does not have management access.');
-      return;
-    }
+    const result = await signInAdmin(email, password);
+    setBusy(false);
+    if (result.error || !result.isAdmin) { setMessage(result.error?.message || 'This account does not have management access.'); return; }
     navigate('/admin', { replace: true });
   };
 
