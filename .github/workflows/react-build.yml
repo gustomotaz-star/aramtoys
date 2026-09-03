@@ -4,16 +4,17 @@ on:
   push:
     branches: [main]
     paths:
-      - 'react-app/**'
+      - 'src/**'
+      - 'index.html'
+      - 'package.json'
+      - 'vite.config.js'
+      - 'vercel.json'
       - '.github/workflows/react-build.yml'
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: react-app
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
