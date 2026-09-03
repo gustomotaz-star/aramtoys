@@ -34,7 +34,7 @@ export default function HomePage() {
         <section className="legacy-hero container">
           <div className="legacy-hero-copy">
             <span className="eyebrow">{ar ? 'وصل جديد كل جمعة' : 'New arrivals every friday'}</span>
-            <h1>{ar ? <>عالم من اللعب<br />يبدأ هنا.</> : <>A world of play<br />starts here.</>}</h1>
+            <h1>{ar ? <>عالم من <span className="accent">الألعاب</span><br />يبدأ هنا.</> : <>A world of <span className="accent">toys</span><br />starts here.</>}</h1>
             <p className="lead">{ar ? 'آرام تويز يختار ألعاب متينة تنمي الخيال لأعمار من 0 لـ 12 سنة — مجربة من أطفال حقيقيين، ومعتمدة من الأهل.' : 'Aram Toys hand-picks durable, imagination-first toys for ages 0–12 — tested by real kids, approved by tired parents.'}</p>
             <div className="hero-cta">
               <a href="#shop" className="btn legacy-primary">{ar ? 'تسوق المجموعة ←' : 'Shop the collection →'}</a>
