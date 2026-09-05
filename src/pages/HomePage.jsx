@@ -57,6 +57,9 @@ export default function HomePage() {
                 <span className="tile">T</span><span className="tile">O</span><span className="tile">Y</span><span className="tile">S</span>
               </div>
             </div>
+            <span className="shelf-toy shelf-toy-1">🧸</span>
+            <span className="shelf-toy shelf-toy-2">🚗</span>
+            <span className="shelf-toy shelf-toy-3">🧩</span>
             <div className="shelf" />
           </div>
         </section>
