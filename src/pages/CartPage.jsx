@@ -20,7 +20,7 @@ export default function CartPage() {
         <>
           {items.map((item) => (
             <div className="cart-item-legacy" key={item.id}>
-              <span className="cart-item-name">{item.name}</span>
+              <span className="cart-item-name">{ar ? (item.name_ar || item.name) : item.name}</span>
               <div className="qty-control">
                 <button onClick={() => setQuantity(item.id, item.quantity - 1)}>−</button>
                 <span>{item.quantity}</span>

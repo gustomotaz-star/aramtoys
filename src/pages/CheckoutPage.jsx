@@ -68,7 +68,7 @@ export default function CheckoutPage() {
 
       <section className="legacy-card">
         <h2>{ar ? 'ملخص الطلب' : 'Order Summary'}</h2>
-        {items.map((item) => <div className="summary-line" key={item.id}><span>{item.name} × {item.quantity}</span><span>{formatMoney(item.price * item.quantity)}</span></div>)}
+        {items.map((item) => <div className="summary-line" key={item.id}><span>{(ar ? (item.name_ar || item.name) : item.name)} × {item.quantity}</span><span>{formatMoney(item.price * item.quantity)}</span></div>)}
         <div className="summary-line"><span>{ar ? 'الشحن' : 'Shipping'}</span><span>{shipping === 0 ? (ar ? 'مجاني' : 'Free') : formatMoney(shipping)}</span></div>
         <div className="summary-line total" style={{borderColor:'var(--color-line)',color:'var(--color-ink)'}}><span>{ar ? 'الإجمالي' : 'Total'}</span><span>{formatMoney(total)}</span></div>
         <button className="place-btn" disabled={busy} onClick={placeOrder}>{busy ? '...' : (ar ? 'تأكيد الطلب' : 'Place Order')}</button>

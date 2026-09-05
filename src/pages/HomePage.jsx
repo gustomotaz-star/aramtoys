@@ -49,8 +49,13 @@ export default function HomePage() {
           <div className="legacy-hero-visual" aria-hidden="true">
             <div className="blob blob-1" />
             <div className="blob blob-2" />
-            <div className="hero-blocks">
-              <span className="tile">A</span><span className="tile">R</span><span className="tile">A</span><span className="tile">M</span>
+            <div className="hero-blocks-wrap">
+              <div className="hero-blocks">
+                <span className="tile">A</span><span className="tile">R</span><span className="tile">A</span><span className="tile">M</span>
+              </div>
+              <div className="hero-blocks hero-blocks-sub">
+                <span className="tile">T</span><span className="tile">O</span><span className="tile">Y</span><span className="tile">S</span>
+              </div>
             </div>
             <div className="shelf" />
           </div>
