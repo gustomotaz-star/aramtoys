@@ -1,5 +1,5 @@
 export const APP = {
-  name: 'Aram Toys',
+  name: 'Aram Toy World',
   currency: 'EGP',
   freeShippingThreshold: 800,
   shippingFee: 50,

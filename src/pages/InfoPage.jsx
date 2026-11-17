@@ -43,7 +43,7 @@ export default function InfoPage() {
             <div className="info-card"><h1>{ar ? 'الصفحة غير موجودة' : 'Page not found'}</h1></div>
           ) : (
             <article className="info-card">
-              <div className="info-eyebrow">ARAM TOYS</div>
+              <div className="info-eyebrow">ARAM TOY WORLD</div>
               <h1>{title}</h1>
               {summary && <p className="info-summary">{summary}</p>}
               <div className="info-body">{body.split(/\n{2,}/).map((p, i) => <p key={i}>{p}</p>)}</div>

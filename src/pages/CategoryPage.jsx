@@ -40,7 +40,7 @@ export default function CategoryPage() {
         </section>
         <section className="category-products container">{!loading && category && (products.length ? <div className="cat-prod-grid">{products.map((product) => <ProductCard key={product.id} product={product} />)}</div> : <p className="empty">{ar ? 'لا يوجد منتجات في هذا التصنيف حالياً.' : 'No products in this category yet.'}</p>)}</section>
       </main>
-      <footer className="simple-footer"><div className="container simple-footer-inner"><span>{ar ? '© 2026 آرام تويز. جميع الحقوق محفوظة.' : '© 2026 Aram Toys. All rights reserved.'}</span><button className="lang-toggle" onClick={toggleLang}>{ar ? 'English' : 'العربية'}</button></div></footer>
+      <footer className="simple-footer"><div className="container simple-footer-inner"><span>{ar ? '© 2026 عالم آرام للألعاب. جميع الحقوق محفوظة.' : '© 2026 Aram Toy World. All rights reserved.'}</span><button className="lang-toggle" onClick={toggleLang}>{ar ? 'English' : 'العربية'}</button></div></footer>
     </>
   );
 }

@@ -11,7 +11,7 @@ export default function HomeFooter() {
         <div className="foot-grid">
           <div className="foot-about">
             <Logo />
-            <p>{ar ? 'آرام تويز متجر ألعاب من القاهرة، بيوصل لعب آمن ومحفّز للخيال لأطفال مصر.' : 'Aram Toys is a Cairo-based toy shop bringing safe, imagination-first play to kids across Egypt.'}</p>
+            <p>{ar ? 'عالم آرام للألعاب متجر ألعاب من القاهرة، بيوصل لعب آمن ومحفّز للخيال لأطفال مصر.' : 'Aram Toy World is a Cairo-based toy shop bringing safe, imagination-first play to kids across Egypt.'}</p>
           </div>
           <div className="foot-col">
             <h4>{ar ? 'المتجر' : 'Shop'}</h4>
@@ -36,7 +36,7 @@ export default function HomeFooter() {
           </div>
         </div>
         <div className="foot-bottom">
-          <span>{ar ? '© 2026 آرام تويز. جميع الحقوق محفوظة.' : '© 2026 Aram Toys. All rights reserved.'}</span>
+          <span>{ar ? '© 2026 عالم آرام للألعاب. جميع الحقوق محفوظة.' : '© 2026 Aram Toy World. All rights reserved.'}</span>
           <button className="lang-toggle" onClick={toggleLang}>{ar ? 'English' : 'العربية'}</button>
           <span className="mono">{ar ? 'صُنع بحب 🧡 في القاهرة' : 'Made with 🧡 in Cairo'}</span>
         </div>

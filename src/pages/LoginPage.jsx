@@ -39,7 +39,7 @@ export default function LoginPage() {
     <div className="auth-top-logo"><Logo /></div>
     <div className="auth-lang"><button className="lang-toggle" onClick={toggleLang}>{ar?'English':'العربية'}</button></div>
     <div className="auth-card">
-      <h1>{ar?'مرحباً بك في آرام تويز':'Welcome to Aram Toys'}</h1>
+      <h1>{ar?'مرحباً بك في عالم آرام للألعاب':'Welcome to Aram Toy World'}</h1>
       <p className="auth-sub">{ar?'سجل الدخول لمتابعة الطلبات وحفظ عناوينك':'Sign in to track orders and save your addresses'}</p>
       <div className="auth-tabs"><button className={mode==='login'?'active':''} onClick={()=>{setMode('login');setMessage(null)}}>{ar?'دخول':'Sign In'}</button><button className={mode==='signup'?'active':''} onClick={()=>{setMode('signup');setMessage(null)}}>{ar?'إنشاء حساب':'Create Account'}</button></div>
       <form onSubmit={submit}>

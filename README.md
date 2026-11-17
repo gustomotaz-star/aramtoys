@@ -1,6 +1,6 @@
-# Aram Toys
+# Aram Toy World
 
-React + Vite storefront and management app for Aram Toys.
+React + Vite storefront and management app for Aram Toy World.
 
 ## Run locally
 
