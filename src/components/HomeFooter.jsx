@@ -1,10 +1,14 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Logo from './Logo';
 import { useI18n } from '../context/I18nContext';
+import { getCategories } from '../services/catalogService';
 
 export default function HomeFooter() {
   const { lang, toggleLang } = useI18n();
   const ar = lang === 'ar';
+  const [worlds, setWorlds] = useState([]);
+  useEffect(() => { getCategories().then(({ data }) => setWorlds(data || [])); }, []);
   return (
     <footer className="legacy-footer">
       <div className="container">
@@ -14,11 +18,8 @@ export default function HomeFooter() {
             <p>{ar ? 'عالم آرام للألعاب متجر ألعاب من القاهرة، بيوصل لعب آمن ومحفّز للخيال لأطفال مصر.' : 'Aram Toy World is a Cairo-based toy shop bringing safe, imagination-first play to kids across Egypt.'}</p>
           </div>
           <div className="foot-col">
-            <h4>{ar ? 'المتجر' : 'Shop'}</h4>
-            <Link to="/category/building-blocks">{ar ? 'مكعبات البناء' : 'Building Blocks'}</Link>
-            <Link to="/category/dolls-figures">{ar ? 'دمى وشخصيات' : 'Dolls & Figures'}</Link>
-            <Link to="/category/outdoor-play">{ar ? 'ألعاب خارجية' : 'Outdoor Play'}</Link>
-            <Link to="/category/puzzles-games">{ar ? 'ألغاز وألعاب' : 'Puzzles & Games'}</Link>
+            <h4>{ar ? 'العوالم' : 'Worlds'}</h4>
+            {worlds.slice(0, 6).map((w) => <Link key={w.id} to={`/category/${w.slug}`}>{ar ? (w.name_ar || w.name) : w.name}</Link>)}
           </div>
           <div className="foot-col">
             <h4>{ar ? 'الدعم' : 'Support'}</h4>
