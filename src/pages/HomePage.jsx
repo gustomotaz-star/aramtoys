@@ -38,7 +38,7 @@ export default function HomePage() {
             <p className="lead">{ar ? 'عالم آرام للألعاب بيختار ألعاب مميزة تنمي الخيال لأعمار من 0 لـ 12 سنة — مجربة من أطفال حقيقيين، ومعتمدة من الأهل.' : 'Aram Toy World hand-picks durable, imagination-first toys for ages 0–12 — tested by real kids, approved by tired parents.'}</p>
             <div className="hero-cta">
               <a href="#shop" className="btn legacy-primary">{ar ? 'تسوق المجموعة ←' : 'Shop the collection →'}</a>
-              <a href="#categories" className="btn legacy-ghost">{ar ? 'تصفح التصنيفات' : 'Browse categories'}</a>
+              <a href="#categories" className="btn legacy-ghost">{ar ? 'تصفح العوالم' : 'Explore the worlds'}</a>
             </div>
             <div className="trust-row">
               <span>🚚 {ar ? 'شحن مجاني فوق 800 جنيه' : 'Free shipping over 800 EGP'}</span>
@@ -66,8 +66,8 @@ export default function HomePage() {
 
         <section className="legacy-section container" id="categories">
           <div className="legacy-section-head">
-            <div><span className="section-tag">{ar ? 'اعثر على لعبته المفضلة' : 'Find their favorite'}</span><h2>{ar ? 'تسوق حسب التصنيف' : 'Shop by category'}</h2></div>
-            <p className="section-sub">{ar ? 'من ألعاب الرضع الآمنة إلى الألغاز الطويلة — مرتبة بالطريقة التي يبحث بها الأهل فعلاً.' : 'From nursery-safe rattles to weekend-long puzzles — sorted the way parents actually search.'}</p>
+            <div><span className="section-tag">{ar ? 'اعثر على لعبته المفضلة' : 'Find their favorite'}</span><h2>{ar ? 'اكتشف العوالم' : 'Explore the worlds'}</h2></div>
+            <p className="section-sub">{ar ? 'كل عالم مليان ألعاب من نوع واحد — اختار عالم طفلك وابدأ المغامرة.' : 'Each world is packed with one kind of play — pick your child’s world and start the adventure.'}</p>
           </div>
           <div className="legacy-cat-grid">
             {categories.map((category) => (

@@ -16,7 +16,7 @@ export default function Header() {
         <Logo />
         <nav className="legacy-nav-links" aria-label="Primary navigation">
           <a href="/#shop">{ar ? 'المتجر' : 'Shop'}</a>
-          <a href="/#categories">{ar ? 'التصنيفات' : 'Categories'}</a>
+          <a href="/#categories">{ar ? 'العوالم' : 'Worlds'}</a>
           <a href="/#why">{ar ? 'ليه عالم آرام' : 'Why Aram Toy World'}</a>
           <a href="/#newsletter">{ar ? 'النشرة البريدية' : 'Newsletter'}</a>
         </nav>
