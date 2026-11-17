@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { createCategory, deleteCategory, updateCategory } from '../services/adminService';
 
-const ICONS = ['🚗', '🧱', '🫧', '🧸', '🍼', '🧩', '🤖', '🛠️', '🎨', '⚽', '🦖', '🚂', '🪀', '🎲', '👸', '🦸', '🎵', '📚'];
+const ICONS = ['💄', '👷', '🏆', '🚗', '🧱', '🫧', '🧸', '🍼', '🧩', '🤖', '🛠️', '🎨', '⚽', '🦖', '🚂', '🪀', '🎲', '👸', '🦸', '🎵', '📚'];
 const emptyWorld = { name: '', name_ar: '', icon: '🧸' };
 
 const PERMISSION_HINT = 'لا توجد صلاحية لتعديل العوالم. تأكد إنك داخل بحساب المدير.';
@@ -53,7 +53,6 @@ export default function WorldsManager({ categories, products, onChanged }) {
 
   const remove = async (world) => {
     if (counts[world.id]) { setMessage({ type: 'error', text: `"${world.name_ar || world.name}" فيه ${counts[world.id]} منتج. انقل المنتجات لعالم ثاني أولاً.` }); return; }
-    if (!window.confirm(`حذف عالم "${world.name_ar || world.name}"؟ لا يمكن التراجع.`)) return;
     setMessage(null);
     const { data, error } = await deleteCategory(world.id);
     if (error || !data?.length) { setMessage({ type: 'error', text: friendlyError(error || { code: 'PGRST116' }) }); return; }
@@ -109,7 +108,8 @@ function IconPicker({ value, onChange, alignEnd = false }) {
 function WorldRow({ world, count, onSave, onDelete }) {
   const [draft, setDraft] = useState(world);
   const [saving, setSaving] = useState(false);
-  useEffect(() => setDraft(world), [world]);
+  const [confirming, setConfirming] = useState(false);
+  useEffect(() => setDraft(world), [world.id, world.name, world.name_ar, world.icon]); // eslint-disable-line react-hooks/exhaustive-deps
   const dirty = draft.name !== world.name || draft.name_ar !== world.name_ar || draft.icon !== world.icon;
   const submit = async () => { setSaving(true); await onSave(draft); setSaving(false); };
   return (
@@ -121,7 +121,9 @@ function WorldRow({ world, count, onSave, onDelete }) {
       <a className="muted world-link" href={`/category/${world.slug}`} target="_blank" rel="noreferrer">/{world.slug}</a>
       <div className="row">
         <button className="btn btn-mint" disabled={!dirty || saving || !draft.name?.trim() || !draft.name_ar?.trim()} onClick={submit}>{saving ? '...' : 'حفظ'}</button>
-        <button className="btn btn-ghost world-delete" onClick={() => onDelete(world)} title={count ? 'فيه منتجات' : 'حذف'}>🗑️</button>
+        {confirming
+          ? <><button autoFocus className="btn btn-danger" onClick={() => { setConfirming(false); onDelete(world); }}>تأكيد الحذف</button><button className="btn btn-ghost" onClick={() => setConfirming(false)}>إلغاء</button></>
+          : <button className="btn btn-ghost world-delete" onClick={() => setConfirming(true)} title={count ? 'فيه منتجات' : 'حذف'} aria-label={`حذف ${world.name_ar || world.name}`}>🗑️</button>}
       </div>
     </div>
   );

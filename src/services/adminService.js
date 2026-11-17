@@ -5,7 +5,7 @@ export async function getAdminSnapshot() {
     supabase.from('orders').select('*, order_items(product_name, quantity), addresses(full_address, city, governorate, phone), profiles(email, full_name, phone)').order('created_at', { ascending: false }),
     supabase.from('profiles').select('id, email, full_name, phone, is_admin, created_at').order('created_at', { ascending: false }),
     supabase.from('products').select('id, name, name_ar, price, stock_quantity, image_url, badge, is_active, category_id, categories(name)').order('name'),
-    supabase.from('categories').select('id, name, name_ar, slug, icon, created_at').order('created_at'),
+    supabase.from('categories').select('id, name, name_ar, slug, icon, created_at').order('created_at').order('slug'),
   ]);
   return { orders, customers, products, categories };
 }
@@ -42,4 +42,17 @@ export function updateCategory(id, changes) {
 
 export function deleteCategory(id) {
   return supabase.from('categories').delete().eq('id', id).select();
+}
+
+export async function deleteProduct(product) {
+  const result = await supabase.from('products').delete().eq('id', product.id).select('id');
+  if (!result.error && result.data?.length && product.image_url?.includes('/storage/v1/object/public/product-images/')) {
+    const path = decodeURIComponent(product.image_url.split('/product-images/')[1].split('?')[0]);
+    await supabase.storage.from('product-images').remove([path]);
+  }
+  return result;
+}
+
+export function hideProduct(productId) {
+  return supabase.from('products').update({ is_active: false }).eq('id', productId);
 }
