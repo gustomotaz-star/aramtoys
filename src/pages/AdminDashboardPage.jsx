@@ -7,7 +7,7 @@ import { createProduct, deleteProduct, getAdminSnapshot, hideProduct, markOrderP
 import { uploadProductImage } from '../services/storageService';
 import WorldsManager from '../components/WorldsManager';
 
-const emptyProduct = { name: '', name_ar: '', category_id: '', price: '', stock_quantity: '', badge: '' };
+const emptyProduct = { name: '', name_ar: '', category_id: '', price: '', stock_quantity: '', badge: '', is_active: false };
 
 export default function AdminDashboardPage() {
   const { signOut } = useAuth();
@@ -71,10 +71,12 @@ export default function AdminDashboardPage() {
     await loadAll();
   };
 
-  const saveProduct = async (product) => {
-    const { error } = await updateProduct(product);
+  const saveProduct = async (product, previous) => {
+    setMessage(null);
+    const { error } = await updateProduct(product, previous);
     if (error) { setMessage({ type: 'error', text: error.message }); return; }
-    await loadAll();
+    setMessage({ type: 'success', text: `تم حفظ "${product.name_ar || product.name}" ✅` });
+    await loadAll(true);
   };
 
   const removeProduct = async (product) => {
@@ -107,7 +109,7 @@ export default function AdminDashboardPage() {
         badge: newProduct.badge.trim() || null,
         image_url: imageUrl,
         slug: `${slugBase}-${Date.now().toString(36)}`,
-        is_active: true,
+        is_active: Boolean(newProduct.is_active),
       });
       if (error) throw error;
       setNewProduct(emptyProduct); setNewImage(null); setShowProductForm(false); await loadAll();
@@ -145,7 +147,7 @@ export default function AdminDashboardPage() {
 
             {tab === 'customers' && <section className="card admin-section"><h2>Customers</h2><div className="table-wrap"><table className="table"><thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th>Joined</th></tr></thead><tbody>{customers.map((c)=><tr key={c.id}><td>{c.full_name||'—'}</td><td>{c.email||'—'}</td><td>{c.phone||'—'}</td><td>{c.is_admin?'Admin':'Customer'}</td><td>{new Date(c.created_at).toLocaleDateString()}</td></tr>)}</tbody></table></div></section>}
 
-            {tab === 'inventory' && <section className="card admin-section"><div className="row between wrap"><h2>Inventory</h2><button className="btn btn-primary" onClick={()=>setShowProductForm(v=>!v)}>+ Add Product</button></div>{showProductForm && <form className="stack" onSubmit={addProduct} style={{ marginBottom: 18 }}><div className="form-grid"><input className="input" placeholder="Product name" value={newProduct.name} onChange={(e)=>setNewProduct({...newProduct,name:e.target.value})} required /><input className="input" placeholder="اسم المنتج" value={newProduct.name_ar} onChange={(e)=>setNewProduct({...newProduct,name_ar:e.target.value})} /><select className="select" value={newProduct.category_id} onChange={(e)=>setNewProduct({...newProduct,category_id:e.target.value})} required><option value="">World / العالم</option>{categories.map(c=><option key={c.id} value={c.id}>{c.icon} {c.name_ar ? `${c.name_ar} · ${c.name}` : c.name}</option>)}</select><input className="input" type="number" min="0" step="0.01" placeholder="Price" value={newProduct.price} onChange={(e)=>setNewProduct({...newProduct,price:e.target.value})} required /><input className="input" type="number" min="0" placeholder="Stock" value={newProduct.stock_quantity} onChange={(e)=>setNewProduct({...newProduct,stock_quantity:e.target.value})} required /><input className="input" placeholder="Badge" value={newProduct.badge} onChange={(e)=>setNewProduct({...newProduct,badge:e.target.value})} /></div><input type="file" accept="image/*" onChange={(e)=>setNewImage(e.target.files?.[0]||null)} /><button className="btn btn-mint">Save Product</button></form>}<div className="table-wrap"><table className="table"><thead><tr><th>Photo</th><th>Product</th><th>World</th><th>Price</th><th>Stock</th><th>Active</th><th></th></tr></thead><tbody>{products.map((p)=><ProductRow key={p.id} product={p} categories={categories} onSave={saveProduct} onDelete={removeProduct} />)}</tbody></table></div></section>}
+            {tab === 'inventory' && <section className="card admin-section"><div className="row between wrap"><h2>Inventory</h2><button className="btn btn-primary" onClick={()=>setShowProductForm(v=>!v)}>+ Add Product</button></div>{showProductForm && <form className="stack" onSubmit={addProduct} style={{ marginBottom: 18 }}><div className="form-grid"><input className="input" placeholder="Product name" value={newProduct.name} onChange={(e)=>setNewProduct({...newProduct,name:e.target.value})} required /><input className="input" placeholder="اسم المنتج" value={newProduct.name_ar} onChange={(e)=>setNewProduct({...newProduct,name_ar:e.target.value})} /><select className="select" value={newProduct.category_id} onChange={(e)=>setNewProduct({...newProduct,category_id:e.target.value})} required><option value="">World / العالم</option>{categories.map(c=><option key={c.id} value={c.id}>{c.icon} {c.name_ar ? `${c.name_ar} · ${c.name}` : c.name}</option>)}</select><input className="input" type="number" min="0" step="0.01" placeholder="Price" value={newProduct.price} onChange={(e)=>setNewProduct({...newProduct,price:e.target.value})} required /><input className="input" type="number" min="0" placeholder="Stock" value={newProduct.stock_quantity} onChange={(e)=>setNewProduct({...newProduct,stock_quantity:e.target.value})} required /><input className="input" placeholder="Badge" value={newProduct.badge} onChange={(e)=>setNewProduct({...newProduct,badge:e.target.value})} /></div><input type="file" accept="image/*" onChange={(e)=>setNewImage(e.target.files?.[0]||null)} /><label className="row" style={{gap:8}}><input type="checkbox" checked={Boolean(newProduct.is_active)} onChange={(e)=>setNewProduct({...newProduct,is_active:e.target.checked})} /> Show in store now (Active)</label><button className="btn btn-mint">Save Product</button></form>}<div className="table-wrap"><table className="table"><thead><tr><th>Photo</th><th>Product</th><th>World</th><th>Price</th><th>Stock</th><th>Active</th><th></th></tr></thead><tbody>{products.map((p)=><ProductRow key={p.id} product={p} categories={categories} onSave={saveProduct} onDelete={removeProduct} />)}</tbody></table></div></section>}
             {tab === 'worlds' && <WorldsManager categories={categories} products={products} onChanged={() => loadAll(true)} />}
           </>
         )}
@@ -163,7 +165,41 @@ function ProductRow({ product, categories, onSave, onDelete }) {
   const [draft, setDraft] = useState(product);
   const [confirming, setConfirming] = useState(false);
   const [imgError, setImgError] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [uploadError, setUploadError] = useState('');
   useEffect(()=>setDraft(product),[JSON.stringify(product)]); // eslint-disable-line react-hooks/exhaustive-deps
-  useEffect(()=>setImgError(false),[product.image_url]);
-  return <tr><td>{draft.image_url && !imgError?<img className="product-admin-image" src={draft.image_url} alt="" onError={()=>setImgError(true)}/>:'🧸'}</td><td><input className="input" value={draft.name} onChange={(e)=>setDraft({...draft,name:e.target.value})}/></td><td><select className="select" style={{minWidth:130}} value={draft.category_id||''} onChange={(e)=>setDraft({...draft,category_id:e.target.value})}>{!draft.category_id&&<option value="">—</option>}{categories.map(c=><option key={c.id} value={c.id}>{c.icon} {c.name_ar||c.name}</option>)}</select></td><td><input className="input" style={{width:90}} type="number" min="0" step="0.01" value={draft.price} onChange={(e)=>setDraft({...draft,price:e.target.value})}/></td><td><input className={`input ${Number(draft.stock_quantity)<=APP.lowStockThreshold?'low-stock':''}`} style={{width:80}} type="number" min="0" value={draft.stock_quantity} onChange={(e)=>setDraft({...draft,stock_quantity:e.target.value})}/></td><td><input type="checkbox" checked={Boolean(draft.is_active)} onChange={(e)=>setDraft({...draft,is_active:e.target.checked})}/></td><td><div className="row"><button className="btn btn-mint" onClick={()=>onSave(draft)}>Save</button>{confirming?<><button autoFocus className="btn btn-danger" onClick={()=>{setConfirming(false);onDelete(product);}}>تأكيد الحذف</button><button className="btn btn-ghost" onClick={()=>setConfirming(false)}>إلغاء</button></>:<button className="btn btn-ghost" aria-label={`Delete ${product.name}`} onClick={()=>setConfirming(true)}>🗑️</button>}</div></td></tr>;
+  useEffect(()=>setImgError(false),[draft.image_url]);
+  const dirty = ['name','name_ar','price','stock_quantity','is_active','category_id','image_url'].some((k)=>String(draft[k] ?? '')!==String(product[k] ?? ''));
+
+  const pickImage = async (e) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    setUploading(true); setUploadError('');
+    try { const url = await uploadProductImage(file); setDraft((d)=>({ ...d, image_url: url })); }
+    catch (err) { setUploadError(err.message || 'Upload failed'); }
+    setUploading(false);
+  };
+  const save = async () => { setSaving(true); await onSave(draft, product); setSaving(false); };
+
+  return <tr className={dirty ? 'row-dirty' : ''}>
+    <td>
+      <label className="product-photo-edit" title="تغيير الصورة / Change photo">
+        {draft.image_url && !imgError ? <img className="product-admin-image" src={draft.image_url} alt="" onError={()=>setImgError(true)}/> : <span className="product-photo-empty">🧸</span>}
+        <span className="product-photo-overlay">{uploading ? '...' : '📷 تغيير'}</span>
+        <input type="file" accept="image/*" hidden disabled={uploading} onChange={pickImage} aria-label={`Change photo for ${product.name}`} />
+      </label>
+      {uploadError && <div className="muted" style={{color:'var(--color-danger)'}}>{uploadError}</div>}
+    </td>
+    <td><div className="stack" style={{gap:6,minWidth:220}}>
+      <input className="input" dir="ltr" placeholder="English name" value={draft.name||''} onChange={(e)=>setDraft({...draft,name:e.target.value})}/>
+      <input className="input" dir="rtl" placeholder="الاسم بالعربي" value={draft.name_ar||''} onChange={(e)=>setDraft({...draft,name_ar:e.target.value})}/>
+    </div></td>
+    <td><select className="select" style={{minWidth:130}} value={draft.category_id||''} onChange={(e)=>setDraft({...draft,category_id:e.target.value})}>{!draft.category_id&&<option value="">—</option>}{categories.map(c=><option key={c.id} value={c.id}>{c.icon} {c.name_ar||c.name}</option>)}</select></td>
+    <td><input className="input" style={{width:90}} type="number" min="0" step="0.01" value={draft.price} onChange={(e)=>setDraft({...draft,price:e.target.value})}/></td>
+    <td><input className={`input ${Number(draft.stock_quantity)<=APP.lowStockThreshold?'low-stock':''}`} style={{width:80}} type="number" min="0" value={draft.stock_quantity} onChange={(e)=>setDraft({...draft,stock_quantity:e.target.value})}/></td>
+    <td><input type="checkbox" checked={Boolean(draft.is_active)} onChange={(e)=>setDraft({...draft,is_active:e.target.checked})}/></td>
+    <td><div className="row"><button className="btn btn-mint" disabled={!dirty||uploading||saving||!draft.name?.trim()} onClick={save}>{saving?'...':'Save'}</button>{confirming?<><button autoFocus className="btn btn-danger" onClick={()=>{setConfirming(false);onDelete(product);}}>تأكيد الحذف</button><button className="btn btn-ghost" onClick={()=>setConfirming(false)}>إلغاء</button></>:<button className="btn btn-ghost" aria-label={`Delete ${product.name}`} onClick={()=>setConfirming(true)}>🗑️</button>}</div></td>
+  </tr>;
 }

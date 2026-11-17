@@ -18,14 +18,24 @@ export function markOrderPaid(orderId) {
   return supabase.from('orders').update({ payment_status: 'paid' }).eq('id', orderId);
 }
 
-export function updateProduct(product) {
-  return supabase.from('products').update({
-    name: product.name,
+function storagePath(url) {
+  if (!url?.includes('/storage/v1/object/public/product-images/')) return null;
+  return decodeURIComponent(url.split('/product-images/')[1].split('?')[0]);
+}
+
+export async function updateProduct(product, previous) {
+  const result = await supabase.from('products').update({
+    name: product.name.trim(),
+    name_ar: product.name_ar?.trim() || null,
+    image_url: product.image_url || null,
     price: Number(product.price),
     stock_quantity: Number(product.stock_quantity),
     is_active: Boolean(product.is_active),
     ...(product.category_id ? { category_id: product.category_id } : {}),
   }).eq('id', product.id);
+  const oldPath = previous && previous.image_url !== product.image_url ? storagePath(previous.image_url) : null;
+  if (!result.error && oldPath) await supabase.storage.from('product-images').remove([oldPath]);
+  return result;
 }
 
 export function createProduct(payload) {
@@ -46,10 +56,8 @@ export function deleteCategory(id) {
 
 export async function deleteProduct(product) {
   const result = await supabase.from('products').delete().eq('id', product.id).select('id');
-  if (!result.error && result.data?.length && product.image_url?.includes('/storage/v1/object/public/product-images/')) {
-    const path = decodeURIComponent(product.image_url.split('/product-images/')[1].split('?')[0]);
-    await supabase.storage.from('product-images').remove([path]);
-  }
+  const path = storagePath(product.image_url);
+  if (!result.error && result.data?.length && path) await supabase.storage.from('product-images').remove([path]);
   return result;
 }
 
