@@ -1,10 +1,18 @@
 import { supabase } from '../lib/supabase';
 
+const ADMIN_PRODUCT_FIELDS = 'id, name, name_ar, price, stock_quantity, image_url, badge, is_active, category_id, description, description_ar, categories(name)';
+
+async function getAdminProducts() {
+  const withDetails = await supabase.from('products').select(`${ADMIN_PRODUCT_FIELDS}, details, details_ar`).order('name');
+  if (withDetails.error && /details/.test(withDetails.error.message || '')) return supabase.from('products').select(ADMIN_PRODUCT_FIELDS).order('name');
+  return withDetails;
+}
+
 export async function getAdminSnapshot() {
   const [orders, customers, products, categories] = await Promise.all([
     supabase.from('orders').select('*, order_items(product_name, quantity), addresses(full_address, city, governorate, phone), profiles(email, full_name, phone)').order('created_at', { ascending: false }),
     supabase.from('profiles').select('id, email, full_name, phone, is_admin, created_at').order('created_at', { ascending: false }),
-    supabase.from('products').select('id, name, name_ar, price, stock_quantity, image_url, badge, is_active, category_id, categories(name)').order('name'),
+    getAdminProducts(),
     supabase.from('categories').select('id, name, name_ar, slug, icon, created_at').order('created_at').order('slug'),
   ]);
   return { orders, customers, products, categories };
@@ -28,6 +36,9 @@ export async function updateProduct(product, previous) {
     name: product.name.trim(),
     name_ar: product.name_ar?.trim() || null,
     image_url: product.image_url || null,
+    description: product.description?.trim() || null,
+    description_ar: product.description_ar?.trim() || null,
+    ...('details' in product ? { details: product.details?.trim() || null, details_ar: product.details_ar?.trim() || null } : {}),
     price: Number(product.price),
     stock_quantity: Number(product.stock_quantity),
     is_active: Boolean(product.is_active),

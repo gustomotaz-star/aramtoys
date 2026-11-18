@@ -168,9 +168,11 @@ function ProductRow({ product, categories, onSave, onDelete }) {
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [uploadError, setUploadError] = useState('');
+  const [showText, setShowText] = useState(false);
+  const hasDetails = 'details' in product;
   useEffect(()=>setDraft(product),[JSON.stringify(product)]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(()=>setImgError(false),[draft.image_url]);
-  const dirty = ['name','name_ar','price','stock_quantity','is_active','category_id','image_url'].some((k)=>String(draft[k] ?? '')!==String(product[k] ?? ''));
+  const dirty = ['name','name_ar','price','stock_quantity','is_active','category_id','image_url','description','description_ar','details','details_ar'].some((k)=>String(draft[k] ?? '')!==String(product[k] ?? ''));
 
   const pickImage = async (e) => {
     const file = e.target.files?.[0];
@@ -183,7 +185,8 @@ function ProductRow({ product, categories, onSave, onDelete }) {
   };
   const save = async () => { setSaving(true); await onSave(draft, product); setSaving(false); };
 
-  return <tr className={dirty ? 'row-dirty' : ''}>
+  const textFilled = Boolean(draft.description_ar || draft.description);
+  return <><tr className={dirty ? 'row-dirty' : ''}>
     <td>
       <label className="product-photo-edit" title="تغيير الصورة / Change photo">
         {draft.image_url && !imgError ? <img className="product-admin-image" src={draft.image_url} alt="" onError={()=>setImgError(true)}/> : <span className="product-photo-empty">🧸</span>}
@@ -200,6 +203,19 @@ function ProductRow({ product, categories, onSave, onDelete }) {
     <td><input className="input" style={{width:90}} type="number" min="0" step="0.01" value={draft.price} onChange={(e)=>setDraft({...draft,price:e.target.value})}/></td>
     <td><input className={`input ${Number(draft.stock_quantity)<=APP.lowStockThreshold?'low-stock':''}`} style={{width:80}} type="number" min="0" value={draft.stock_quantity} onChange={(e)=>setDraft({...draft,stock_quantity:e.target.value})}/></td>
     <td><input type="checkbox" checked={Boolean(draft.is_active)} onChange={(e)=>setDraft({...draft,is_active:e.target.checked})}/></td>
-    <td><div className="row"><button className="btn btn-mint" disabled={!dirty||uploading||saving||!draft.name?.trim()} onClick={save}>{saving?'...':'Save'}</button>{confirming?<><button autoFocus className="btn btn-danger" onClick={()=>{setConfirming(false);onDelete(product);}}>تأكيد الحذف</button><button className="btn btn-ghost" onClick={()=>setConfirming(false)}>إلغاء</button></>:<button className="btn btn-ghost" aria-label={`Delete ${product.name}`} onClick={()=>setConfirming(true)}>🗑️</button>}</div></td>
-  </tr>;
+    <td><div className="row"><button type="button" className={`btn btn-ghost story-toggle ${textFilled?'has-text':''}`} onClick={()=>setShowText(v=>!v)} title="القصة والتفاصيل / Story & details" aria-expanded={showText}>📝</button><button className="btn btn-mint" disabled={!dirty||uploading||saving||!draft.name?.trim()} onClick={save}>{saving?'...':'Save'}</button>{confirming?<><button autoFocus className="btn btn-danger" onClick={()=>{setConfirming(false);onDelete(product);}}>تأكيد الحذف</button><button className="btn btn-ghost" onClick={()=>setConfirming(false)}>إلغاء</button></>:<button className="btn btn-ghost" aria-label={`Delete ${product.name}`} onClick={()=>setConfirming(true)}>🗑️</button>}</div></td>
+  </tr>
+  {showText && <tr className={`story-row ${dirty ? 'row-dirty' : ''}`}><td colSpan={7}>
+    <div className="story-grid">
+      <label><span>📖 القصة بالعربي</span><textarea className="input" dir="rtl" rows={3} placeholder="قصة قصيرة جداً عن اللعبة..." value={draft.description_ar||''} onChange={(e)=>setDraft({...draft,description_ar:e.target.value})}/></label>
+      <label><span>📖 Story (English)</span><textarea className="input" dir="ltr" rows={3} placeholder="A very short story about the toy..." value={draft.description||''} onChange={(e)=>setDraft({...draft,description:e.target.value})}/></label>
+      {hasDetails ? <>
+        <label><span>📋 التفاصيل بالعربي (كل سطر نقطة)</span><textarea className="input" dir="rtl" rows={4} placeholder={`العمر: من ٣ سنين
+المقاس: ...`} value={draft.details_ar||''} onChange={(e)=>setDraft({...draft,details_ar:e.target.value})}/></label>
+        <label><span>📋 Details (one per line)</span><textarea className="input" dir="ltr" rows={4} placeholder={`Age: 3+
+Size: ...`} value={draft.details||''} onChange={(e)=>setDraft({...draft,details:e.target.value})}/></label>
+      </> : <p className="muted">خانات التفاصيل تحتاج تشغيل ملف SQL مرة واحدة.</p>}
+    </div>
+  </td></tr>}
+  </>;
 }
